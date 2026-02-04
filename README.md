@@ -25,7 +25,6 @@ Gv acts as the central mediator:
 - Fundamental constants ($G$, $\hbar$, $\Lambda$, Higgs vev, etc.)
 
 ![GV Hub Diagram](gv-hub-diagram.png)  
-*(Upload your hub diagram PNG/SVG here after this commit)*
 
 ## Key Implications
 
