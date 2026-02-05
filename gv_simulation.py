@@ -1,8 +1,8 @@
 """
 gv_simulation.py
-Per Grok: Refine H0 tension with CMB/supernovae proxy data into Gv growth rate.
-Early tight (CMB-like), late loose (SNe-like) → toy tension.
-Consciousness coherence + previous features.
+Per Grok: Black hole entropy layer — Gv event horizon analog (S ~ A/4 Planck units).
+Horizon from curvature peak, entropy from fluctuation info on horizon, tied to consciousness bounds.
+H0 tension + previous features.
 """
 
 import numpy as np
@@ -18,6 +18,7 @@ class GodVariable:
         self.gv_value = alpha
         self.rho_profile = None
         self.scale_factors = None
+        self.curvature_proxy = None
 
     def set_evolving_profile(self, n_points=1000, vacuum_amplitude=0.05):
         a = np.linspace(0.001, 1, n_points)
@@ -30,6 +31,12 @@ class GodVariable:
         vacuum_raw = vacuum_amplitude * np.sin(freq) / a**2
         vacuum_fluct = vacuum_raw * (1 - log_cutoff.clip(0, 0.95))
         rho_total = matter + radiation + dark_energy + vacuum_fluct + 1e-121
+        
+        # Curvature proxy for BH analog
+        curvature = 8 * np.pi * rho_total
+        curvature += 0.05 * np.gradient(np.gradient(curvature))
+        self.curvature_proxy = curvature
+        
         self.rho_profile = rho_total
 
     def compute_integral(self):
@@ -44,55 +51,45 @@ class GodVariable:
         self.update_gv()
         return self.gv_value / (scale_factor ** 4)
 
-    def derive_h0_proxy(self, regime='late'):
-        """Toy H0 from Gv growth rate da/dt proxy."""
-        self.update_gv()
-        a = self.scale_factors
-        # Numerical dGv/da
-        gv_over_a = np.interp(a, a, np.cumsum(self.rho_profile) * np.diff(a, prepend=0) + self.alpha)  # Approx cumulative
-        dGv_da = np.gradient(gv_over_a, a)
-        if regime == 'early':
-            h0_early = np.mean(dGv_da[a < 0.01]) * 74  # CMB-like tight, higher H0 proxy
-            return h0_early
-        else:
-            h0_late = np.mean(dGv_da[a > 0.5]) * 68   # SNe-like, lower H0 proxy
-            return h0_late
+    def bh_horizon_proxy(self):
+        """Toy event horizon from curvature peak (early dense era proxy)."""
+        peak_idx = np.argmax(self.curvature_proxy)
+        horizon_radius_proxy = 1 / (self.scale_factors[peak_idx] + 0.01)  # Inverse scale
+        area_proxy = 4 * np.pi * horizon_radius_proxy**2
+        return area_proxy, peak_idx
 
-    def h0_tension_proxy(self):
-        h0_early = self.derive_h0_proxy('early')
-        h0_late = self.derive_h0_proxy('late')
-        tension_sigma = abs(h0_early - h0_late) / 2  # Toy ~5σ tension proxy
-        return h0_early, h0_late, tension_sigma
-
-    def coherence_threshold(self, threshold=1e-3):
-        fluct = self.rho_profile - np.mean(self.rho_profile)
-        variance = np.var(fluct)
-        return variance < threshold
-
-    def info_entropy_proxy(self):
-        hist, _ = np.histogram(self.rho_profile, bins=50)
-        hist = hist / np.sum(hist)
-        hist = hist[hist > 0]
-        entropy = -np.sum(hist * np.log2(hist + 1e-100))
+    def bh_entropy_proxy(self):
+        """S ~ A/4 Planck units analog, scaled by Gv info content."""
+        area, _ = self.bh_horizon_proxy()
+        s_bekenstein = area / 4  # Planck units proxy
+        # Tie to info bounds: fluctuation entropy on "horizon" region
+        horizon_slice = slice(max(0, peak_idx-50), min(len(self.rho_profile), peak_idx+50))
+        local_fluct = self.rho_profile[horizon_slice] - np.mean(self.rho_profile[horizon_slice])
+        info_entropy = -np.sum(local_fluct**2 * np.log(local_fluct**2 + 1e-100))
+        entropy = s_bekenstein * (1 + 0.1 * info_entropy)  # Gv-tied info boost
         return entropy
 
-    def emergent_consciousness_proxy(self, coherence_threshold=1e-3, entropy_min=5.0):
-        coherent = self.coherence_threshold(coherence_threshold)
-        entropy = self.info_entropy_proxy()
-        aware = coherent and (entropy > entropy_min)
-        return aware, entropy
-
-    def plot_evolution(self, save_path="rho_h0_tension.png"):
-        plt.figure(figsize=(12, 8))
+    def plot_evolution(self, save_path="rho_bh_entropy.png"):
+        plt.figure(figsize=(12, 10))
+        plt.subplot(2,1,1)
         plt.plot(self.scale_factors, self.rho_profile, label=r"$\rho_{\text{total}}(a)$", color="purple")
-        plt.axvline(0.01, color='red', linestyle='--', label="Early (CMB proxy)")
-        plt.axvline(0.5, color='blue', linestyle='--', label="Late (SNe proxy)")
+        plt.plot(self.scale_factors, self.curvature_proxy / np.max(self.curvature_proxy), label="Curvature Proxy (norm)", color="darkgreen", alpha=0.7)
+        area, peak_idx = self.bh_horizon_proxy()
+        plt.axvline(self.scale_factors[peak_idx], color='red', linestyle='--', label="Toy BH Horizon")
         plt.xlabel("Scale Factor a(t)")
-        plt.ylabel("Energy Density")
-        plt.title("Cosmic Evolution with H0 Tension Proxies")
+        plt.ylabel("Density / Curvature")
         plt.xscale('log')
+        plt.title("Cosmic Evolution with Toy Black Hole Horizon Proxy")
         plt.grid(True)
         plt.legend()
+        
+        plt.subplot(2,1,2)
+        plt.plot(self.scale_factors, self.rho_profile, color="purple")
+        plt.xlabel("Scale Factor a(t)")
+        plt.ylabel("Energy Density")
+        plt.xscale('log')
+        plt.grid(True)
+        
         plt.tight_layout()
         plt.savefig(save_path)
         print(f"Plot saved: {save_path}")
@@ -115,7 +112,7 @@ def tune_alpha_for_lambda(target_lambda=1.1056e-52, scale_factor=1e61):
 def main():
     observed_lambda = 1.1056e-52
 
-    print("Tuning alpha for H0 tension proxy...\n")
+    print("Tuning alpha with BH entropy layer...\n")
     best_alpha, error = tune_alpha_for_lambda()
 
     gv = GodVariable(alpha=best_alpha)
@@ -129,13 +126,10 @@ def main():
     print(f"Observed Λ:       {observed_lambda:.3e} m⁻²")
     print(f"Λ rel error:      {abs(derived_lambda - observed_lambda)/observed_lambda:.2e}\n")
 
-    h0_early, h0_late, tension = gv.h0_tension_proxy()
-    print(f"Toy H0 early (CMB proxy): {h0_early:.1f} km/s/Mpc")
-    print(f"Toy H0 late (SNe proxy):  {h0_late:.1f} km/s/Mpc")
-    print(f"Toy tension:              {tension:.1f} σ proxy")
-
-    aware, entropy = gv.emergent_consciousness_proxy()
-    print(f"\nConsciousness proxy:      {'Triggered' if aware else 'Not yet'} (entropy {entropy:.3f})")
+    area, peak_idx = gv.bh_horizon_proxy()
+    entropy = gv.bh_entropy_proxy()
+    print(f"Toy BH horizon area proxy: {area:.3e}")
+    print(f"Toy BH entropy (S ~ A/4 + Gv info): {entropy:.3e} Planck units")
 
     gv.plot_evolution()
 
