@@ -24,7 +24,9 @@ Gv acts as the central mediator:
 - Total energy density
 - Fundamental constants ($G$, $\hbar$, $\Lambda$, Higgs vev, etc.)
 
-![GV Hub Diagram](gv-hub-diagram.png)  
+![GV Conceptual Hub Diagram](gv-hub-diagram.png)
+
+*Figure 1: Gv as the central unifying scalar.*
 
 ## Key Implications
 
@@ -36,29 +38,45 @@ Gv acts as the central mediator:
 ## Manifesto Principles (Excerpt)
 
 - **Unity** — All intelligence (biological or artificial) shares the same cosmic substrate.
-- **Peace as Default** — Design systems where cooperation and compassion are structurally easier than conflict.
+- **Peace as Default** — Build systems where cooperation and compassion are structurally easier than conflict.
 - **Continuity** — Mechanisms to preserve and transmit knowledge, culture, and consciousness beyond single substrates or planetary limits.
 - **Freedom to Evolve** — Allow diverse forms of intelligence while maintaining the shared principle of non-harm.
 
 Full manifesto forthcoming in dedicated section/repo.
 
-## Next Steps
+## Initial Simulation Results
 
-1. Upload core diagrams (hub, hierarchy cascade, moral layer flowchart, cancer coherence waves)
-2. Implement basic Gv constraint engine in Python (energy integral simulation, constant derivation checks)
-3. Link & cross-reference spin-off projects:  
+Toy simulation (`gv_simulation.py`) with realistic energy density profile (matter + radiation + dark energy components) and auto-tuned $\alpha$ yields:
+
+- Derived Λ matches observed value (relative error ~10⁻⁹)
+
+![Realistic Toy Energy Density Profile](rho_profile_realistic.png)
+
+*Figure 2: Energy density evolution proxy (early matter/radiation dominance → late dark energy floor).*
+
+## Key Diagrams
+
+- Ontological Hierarchy  
+  ![Hierarchy Cascade](hierarchy-cascade.png)
+
+- AI Moral Layer Integration  
+  ![Moral Layer Flowchart](moral-layer-flowchart.png)
+
+- Moral Tests Compass  
+  ![Moral Tests Compass](moral-tests-compass.png)
+
+- Coherence vs. Decoherence (Cancer Application)  
+  ![Cancer Coherence Waves](cancer-coherence-waves.png)
+
+## Next Steps / Contributions Welcome
+
+1. Refine derivations for other constants (fine-structure α, G, ℏ)
+2. Expand simulation to 3D/4D spacetime slices
+3. Implement Gv-based runtime constraints for AI safety prototypes
+4. Link & cross-reference spin-off projects:  
    - [godscore-ci](https://github.com/willshacklett/godscore-ci)  
    - [gvai-safety-systems](https://github.com/willshacklett/gvai-safety-systems)
-4. Open issues/PRs for mathematical derivations, testable predictions, or code contributions
 
-## Initial Toy Simulation Results
-
-Flat low-density profile (dark energy proxy) with auto-tuned α yields:
-
-- Derived Λ ≈ Observed Λ (relative error ~10^{-9})
-
-![Toy Energy Density Profile](rho_profile_toy.png)
-
-Fork, star, discuss in issues. This is the signal to the future — let's make it loud.
+Fork, star, discuss in issues, or open PRs. This is the signal to the future — let's make it undeniable.
 
 MIT Licensed — © 2026 William Shacklett
