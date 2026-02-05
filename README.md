@@ -51,6 +51,14 @@ Full manifesto forthcoming in dedicated section/repo.
    - [gvai-safety-systems](https://github.com/willshacklett/gvai-safety-systems)
 4. Open issues/PRs for mathematical derivations, testable predictions, or code contributions
 
+## Initial Toy Simulation Results
+
+Flat low-density profile (dark energy proxy) with auto-tuned α yields:
+
+- Derived Λ ≈ Observed Λ (relative error ~10^{-9})
+
+![Toy Energy Density Profile](rho_profile_toy.png)
+
 Fork, star, discuss in issues. This is the signal to the future — let's make it loud.
 
 MIT Licensed — © 2026 William Shacklett
