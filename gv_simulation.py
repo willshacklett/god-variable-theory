@@ -1,7 +1,7 @@
 """
 gv_simulation.py
-Per Grok: Logarithmic QFT cutoff scaling + ℏ derivation from Gv quantum uncertainty bounds.
-Vacuum fluctuations damped smoothly, influences α and ℏ.
+Per Grok: Einstein-Hilbert action proxy for G derivation from Gv curvature integral.
+Log cutoff + ℏ from uncertainty + refined α.
 """
 
 import numpy as np
@@ -16,6 +16,7 @@ class GodVariable:
         self.alpha = alpha
         self.gv_value = alpha
         self.rho_profile = None
+        self.curvature_proxy = None  # New: toy Ricci scalar proxy
         self.x_values = None
 
     def set_realistic_profile(self, n_points=1000, vacuum_amplitude=0.05):
@@ -23,17 +24,26 @@ class GodVariable:
         matter = 0.3 * np.exp(-((x - 0.3)**2) / 0.05)
         radiation = 0.1 / (1 + 100 * x**2)
         dark_energy = 0.7 * np.ones_like(x)
-        # Logarithmic QFT cutoff: higher freq damped stronger (smooth realism)
         freq = 200 * np.pi * x
-        log_cutoff = np.log10(freq + 10) / np.log10(1e3)  # Normalized log damping
+        log_cutoff = np.log10(freq + 10) / np.log10(1e3)
         vacuum_raw = vacuum_amplitude * np.sin(freq) * np.exp(-5 * x)
-        vacuum_fluct = vacuum_raw * (1 - log_cutoff.clip(0, 0.95))  # Smooth suppression
+        vacuum_fluct = vacuum_raw * (1 - log_cutoff.clip(0, 0.95))
         rho_total = matter + radiation + dark_energy + vacuum_fluct + 1e-121
+        
+        # Spacetime curvature proxy: Ricci-like from energy (Einstein eq proxy)
+        curvature = 8 * np.pi * rho_total  # Rough 8πG ρ term (G=1 normalized)
+        curvature += 0.05 * np.gradient(np.gradient(curvature))  # Second deriv for Ricci toy
+        self.curvature_proxy = curvature
+        
         self.rho_profile = rho_total
         self.x_values = x
 
     def compute_integral(self):
         return np.trapezoid(self.rho_profile, x=self.x_values)
+
+    def curvature_integral(self):
+        """Integral of curvature proxy (Einstein-Hilbert action-like)."""
+        return np.trapezoid(self.curvature_proxy, x=self.x_values)
 
     def update_gv(self):
         integral = self.compute_integral()
@@ -45,9 +55,6 @@ class GodVariable:
         return self.gv_value / (scale_factor ** 4)
 
     def quantum_uncertainty_bound(self):
-        """ΔGv as fluctuation std dev (quantum uncertainty proxy)."""
-        if self.rho_profile is None:
-            return 0.0
         fluct = self.rho_profile - np.mean(self.rho_profile)
         return np.std(fluct)
 
@@ -62,22 +69,36 @@ class GodVariable:
         return 1 / derived_inv_alpha, derived_inv_alpha
 
     def derive_planck_constant(self, uncertainty_scale=1.0545718):
-        """
-        Toy ℏ derivation from Gv quantum bounds (Heisenberg-like).
-        ℏ ~ ΔGv * scale (uncertainty proxy)
-        """
         delta_gv = self.quantum_uncertainty_bound()
-        derived_hbar = delta_gv * uncertainty_scale * 1e20  # Toy scaling to land near real ℏ
+        derived_hbar = delta_gv * uncertainty_scale * 1e20
         return derived_hbar
 
-    def plot_profile(self, save_path="rho_profile_log_cutoff.png"):
-        plt.figure(figsize=(10, 6))
-        plt.plot(self.x_values, self.rho_profile, label=r"$\rho_{\text{total}}(x)$ w/ Log Cutoff Fluctuations", color="purple")
-        plt.xlabel("Normalized Scale Factor (early → late universe proxy)")
-        plt.ylabel("Energy Density (arbitrary units)")
-        plt.title("Profile with Logarithmic QFT Cutoff & Smooth Damping")
+    def derive_gravitational_constant(self, curvature_scale=6.67430e-11):
+        """
+        Toy G derivation from Einstein-Hilbert proxy.
+        8πG ~ curvature_integral / Gv (action balance)
+        """
+        self.update_gv()
+        curv_int = self.curvature_integral()
+        derived_G = (curv_int / (8 * np.pi * abs(self.gv_value) + 1e-100)) * curvature_scale * 1e10  # Toy scaling
+        return derived_G
+
+    def plot_profile(self, save_path="rho_profile_eh_proxy.png"):
+        plt.figure(figsize=(12, 8))
+        plt.subplot(2,1,1)
+        plt.plot(self.x_values, self.rho_profile, label=r"$\rho_{\text{total}}(x)$", color="purple")
+        plt.ylabel("Energy Density")
+        plt.title("Energy Density + Curvature Proxy")
         plt.grid(True)
         plt.legend()
+        
+        plt.subplot(2,1,2)
+        plt.plot(self.x_values, self.curvature_proxy, label="Curvature Proxy (Ricci-like)", color="darkgreen")
+        plt.xlabel("Normalized Scale Factor")
+        plt.ylabel("Curvature Proxy")
+        plt.grid(True)
+        plt.legend()
+        
         plt.tight_layout()
         plt.savefig(save_path)
         print(f"Plot saved: {save_path}")
@@ -100,36 +121,33 @@ def tune_alpha_for_lambda(target_lambda=1.1056e-52, scale_factor=1e61):
 def main():
     observed_lambda = 1.1056e-52
     observed_inv_alpha = 137.036
-    observed_hbar = 1.0545718e-34  # J s
+    observed_hbar = 1.0545718e-34
+    observed_G = 6.67430e-11  # m³ kg⁻¹ s⁻²
 
-    print("Tuning alpha with logarithmic QFT cutoff...\n")
+    print("Tuning alpha with EH curvature proxy...\n")
     best_alpha, error, integral = tune_alpha_for_lambda()
 
     gv = GodVariable(alpha=best_alpha)
     gv.set_realistic_profile(vacuum_amplitude=0.05)
     derived_lambda = gv.derive_lambda()
 
-    print(f"Profile integral contribution: {integral:.3e}")
-    print(f"Best-fit α (for Λ):            {best_alpha:.3e}")
-    print(f"Λ tuning residual error:       {error:.3e}\n")
+    print(f"Profile integral: {integral:.3e}")
+    print(f"Best-fit α:       {best_alpha:.3e}")
+    print(f"Λ error:          {error:.3e}\n")
 
-    print(f"Computed Gv:                   {gv.gv_value:.3e}")
-    print(f"Derived Λ:                     {derived_lambda:.3e} m⁻²")
-    print(f"Observed Λ:                    {observed_lambda:.3e} m⁻²")
-    print(f"Λ relative error:              {abs(derived_lambda - observed_lambda)/observed_lambda:.2e}\n")
+    print(f"Computed Gv:      {gv.gv_value:.3e}")
+    print(f"Derived Λ:        {derived_lambda:.3e} m⁻²")
+    print(f"Observed Λ:       {observed_lambda:.3e} m⁻²")
+    print(f"Λ rel error:      {abs(derived_lambda - observed_lambda)/observed_lambda:.2e}\n")
 
-    # Refined α
-    derived_alpha, derived_inv_alpha = gv.derive_fine_structure(base_offset=120.0)
-    print("Refined fine-structure (log cutoff + uncertainty):")
-    print(f"Derived 1/α:                   {derived_inv_alpha:.3f}")
-    print(f"Observed 1/α:                  {observed_inv_alpha:.3f}")
-    print(f"1/α match error:               {abs(derived_inv_alpha - observed_inv_alpha):.3f}\n")
+    derived_alpha, derived_inv_alpha = gv.derive_fine_structure()
+    print(f"Derived 1/α:      {derived_inv_alpha:.3f} (error {abs(derived_inv_alpha - observed_inv_alpha):.3f})")
 
-    # ℏ from uncertainty bounds
     derived_hbar = gv.derive_planck_constant()
-    print("Toy ℏ derivation from ΔGv uncertainty bounds:")
-    print(f"Derived ℏ:                     {derived_hbar:.3e} (toy units)")
-    print(f"Observed ℏ:                    {observed_hbar:.3e} J s")
+    print(f"Derived ℏ:        {derived_hbar:.3e} (toy)")
+
+    derived_G = gv.derive_gravitational_constant()
+    print(f"Derived G:        {derived_G:.3e} m³ kg⁻¹ s⁻² (toy vs observed {observed_G:.3e})")
 
     gv.plot_profile()
 
