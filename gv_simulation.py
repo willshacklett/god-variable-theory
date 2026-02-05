@@ -1,7 +1,7 @@
 """
 gv_simulation.py
-Upgraded with realistic rho profile + toy fine-structure constant α derivation.
-Alpha tuning for Λ, plus speculative α attempt.
+Upgraded with quantum vacuum fluctuations in rho_total for realism.
+Improved toy fine-structure α derivation incorporating fluctuation amplitude.
 """
 
 import numpy as np
@@ -18,12 +18,15 @@ class GodVariable:
         self.rho_profile = None
         self.x_values = None
 
-    def set_realistic_profile(self, n_points=1000):
+    def set_realistic_profile(self, n_points=1000, vacuum_amplitude=0.05):
+        """Realistic profile + quantum vacuum fluctuations."""
         x = np.linspace(0, 1, n_points)
         matter = 0.3 * np.exp(-((x - 0.3)**2) / 0.05)
         radiation = 0.1 / (1 + 100 * x**2)
         dark_energy = 0.7 * np.ones_like(x)
-        rho_total = matter + radiation + dark_energy + 1e-121
+        # Quantum vacuum fluctuations: small high-frequency oscillation
+        vacuum_fluct = vacuum_amplitude * np.sin(200 * np.pi * x) * np.exp(-10 * x)  # Early dominance, damps
+        rho_total = matter + radiation + dark_energy + vacuum_fluct + 1e-121
         self.rho_profile = rho_total
         self.x_values = x
 
@@ -39,23 +42,21 @@ class GodVariable:
         self.update_gv()
         return self.gv_value / (scale_factor ** 4)
 
-    def derive_fine_structure(self, quantum_offset=137.0):
-        """
-        Toy derivation of fine-structure constant α ≈ 1/137.
-        Speculative proxy: α ~ 1 / (log(Gv) + offset)
-        Offset tuned to land near observed 1/α = 137.036
-        """
+    def derive_fine_structure(self, quantum_offset=120.0):
+        """Improved toy α: incorporate vacuum fluctuation amplitude into coupling."""
         self.update_gv()
-        log_gv = np.log10(abs(self.gv_value) + 1e-100)  # Avoid log0
-        derived_inv_alpha = log_gv + quantum_offset
+        # Fluct amplitude proxy from profile (early high-freq part)
+        fluct_amp = np.max(np.abs(self.rho_profile[:200] - np.mean(self.rho_profile[:200])))
+        log_gv = np.log10(abs(self.gv_value) + 1e-100)
+        derived_inv_alpha = log_gv + quantum_offset + 10 / (fluct_amp + 0.01)  # Fluct dampens coupling
         return 1 / derived_inv_alpha, derived_inv_alpha
 
-    def plot_profile(self, save_path="rho_profile_realistic.png"):
+    def plot_profile(self, save_path="rho_profile_quantum.png"):
         plt.figure(figsize=(10, 6))
-        plt.plot(self.x_values, self.rho_profile, label=r"$\rho_{\text{total}}(x)$", color="purple")
+        plt.plot(self.x_values, self.rho_profile, label=r"$\rho_{\text{total}}(x)$ w/ Vacuum Fluctuations", color="purple")
         plt.xlabel("Normalized Scale Factor (early → late universe proxy)")
         plt.ylabel("Energy Density (arbitrary units)")
-        plt.title("Realistic Toy Energy Density Profile")
+        plt.title("Realistic Toy Profile with Quantum Vacuum Fluctuations")
         plt.grid(True)
         plt.legend()
         plt.tight_layout()
@@ -65,7 +66,7 @@ class GodVariable:
 
 def tune_alpha_for_lambda(target_lambda=1.1056e-52, scale_factor=1e61):
     gv = GodVariable()
-    gv.set_realistic_profile()
+    gv.set_realistic_profile(vacuum_amplitude=0.05)
     integral = gv.compute_integral()
 
     def objective(alpha):
@@ -81,11 +82,11 @@ def main():
     observed_lambda = 1.1056e-52
     observed_inv_alpha = 137.036
 
-    print("Tuning alpha with realistic toy profile for Λ...\n")
+    print("Tuning alpha with quantum vacuum fluctuations...\n")
     best_alpha, error, integral = tune_alpha_for_lambda()
 
     gv = GodVariable(alpha=best_alpha)
-    gv.set_realistic_profile()
+    gv.set_realistic_profile(vacuum_amplitude=0.05)
     derived_lambda = gv.derive_lambda()
 
     print(f"Profile integral contribution: {integral:.3e}")
@@ -97,9 +98,9 @@ def main():
     print(f"Observed Λ:                    {observed_lambda:.3e} m⁻²")
     print(f"Λ relative error:              {abs(derived_lambda - observed_lambda)/observed_lambda:.2e}\n")
 
-    # Toy fine-structure attempt
-    derived_alpha, derived_inv_alpha = gv.derive_fine_structure(quantum_offset=120.0)  # Tune offset for ~137
-    print("Toy fine-structure constant derivation:")
+    # Improved α with fluctuations
+    derived_alpha, derived_inv_alpha = gv.derive_fine_structure(quantum_offset=120.0)
+    print("Improved toy fine-structure derivation (vacuum fluctuations included):")
     print(f"Derived α:                     {derived_alpha:.6f}")
     print(f"Derived 1/α:                   {derived_inv_alpha:.3f}")
     print(f"Observed 1/α:                  {observed_inv_alpha:.3f}")
