@@ -21,8 +21,12 @@ def ensure_dir(path: str) -> None:
 def write_csv(path: str, rows: List[Dict]) -> None:
     if not rows:
         raise RuntimeError(f"No rows to write for {path}")
+
+    # Collect union of all keys so later rows can't introduce new columns and crash CI
+    fieldnames = sorted({k for row in rows for k in row.keys()})
+
     with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
 
