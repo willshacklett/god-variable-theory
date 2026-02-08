@@ -5,9 +5,13 @@ on:
     branches: ["main"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
+  test-and-metrics:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,19 +26,42 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
+      - name: Quick sanity: show files
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          echo ""
+          echo "scripts:"
+          ls -la scripts || true
+          echo ""
+          echo "artifacts (before):"
+          ls -la artifacts || true
+
       - name: Run pytest
         run: |
           pytest -q
 
       - name: Collect CI metrics (ΔGv + cumulative + recoverability)
+        env:
+          GV_CI_METRICS_DIR: artifacts/ci_metrics
         run: |
           python scripts/collect_ci_metrics.py
+          echo ""
+          echo "artifacts (after collect):"
+          ls -R artifacts || true
 
-      - name: Generate plots (R vs cumulative |ΔGv|)
+      - name: Generate plots (headless)
+        env:
+          GV_CI_METRICS_DIR: artifacts/ci_metrics
+          MPLBACKEND: Agg
         run: |
           python scripts/plot_ci_metrics.py
+          echo ""
+          echo "plots:"
+          ls -R artifacts/ci_metrics/plots || true
 
       - name: Upload metrics artifacts (CSV + plots)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gv-ci-metrics
