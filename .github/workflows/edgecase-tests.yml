@@ -25,3 +25,14 @@ jobs:
       - name: Run pytest
         run: |
           pytest -q
+
+      - name: Collect CI metrics (ΔGv + cumulative + recoverability)
+        run: |
+          python scripts/collect_ci_metrics.py
+
+      - name: Upload metrics artifacts (CSV)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gv-ci-metrics
+          path: artifacts/ci_metrics/**
+          if-no-files-found: error
