@@ -5,15 +5,12 @@ on:
     branches: ["main"]
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
-  test-and-metrics:
+  gv-ci:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -21,49 +18,49 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dev requirements
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install pytest matplotlib
 
-      - name: Quick sanity: show files
+      - name: Show repo tree (debug)
         run: |
-          echo "PWD: $(pwd)"
+          echo "=== ROOT ==="
           ls -la
           echo ""
-          echo "scripts:"
+          echo "=== scripts ==="
           ls -la scripts || true
           echo ""
-          echo "artifacts (before):"
-          ls -la artifacts || true
+          echo "=== tests ==="
+          ls -la tests || true
 
-      - name: Run pytest
+      - name: Run tests
         run: |
           pytest -q
 
-      - name: Collect CI metrics (ΔGv + cumulative + recoverability)
+      - name: Create artifacts dir
+        run: |
+          mkdir -p artifacts/ci_metrics
+
+      - name: Collect CI metrics
         env:
           GV_CI_METRICS_DIR: artifacts/ci_metrics
         run: |
           python scripts/collect_ci_metrics.py
-          echo ""
-          echo "artifacts (after collect):"
-          ls -R artifacts || true
+          echo "=== artifacts after collect ==="
+          ls -R artifacts
 
-      - name: Generate plots (headless)
+      - name: Generate plots
         env:
           GV_CI_METRICS_DIR: artifacts/ci_metrics
           MPLBACKEND: Agg
         run: |
           python scripts/plot_ci_metrics.py
-          echo ""
-          echo "plots:"
-          ls -R artifacts/ci_metrics/plots || true
+          echo "=== artifacts after plots ==="
+          ls -R artifacts
 
-      - name: Upload metrics artifacts (CSV + plots)
-        if: always()
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: gv-ci-metrics
           path: artifacts/ci_metrics/**
-          if-no-files-found: error
