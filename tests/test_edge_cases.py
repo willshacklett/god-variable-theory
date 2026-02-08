@@ -8,9 +8,11 @@ from src.gv_edgecase_sims import (
 )
 
 
-def _first_trigger_step(monitor: GVMonitor, g_series, l_series) -> int | None:
+def _first_trigger_step(monitor: GVMonitor, g_series, l_series, min_step: int = 0) -> int | None:
     for i, (g, l) in enumerate(zip(g_series, l_series)):
         _, ds_dt = monitor.update(g, l)
+        if i < min_step:
+            continue
         if abs(ds_dt) > monitor.threshold:
             return i
     return None
