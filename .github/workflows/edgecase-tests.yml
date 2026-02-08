@@ -9,6 +9,10 @@ jobs:
   gv-ci:
     runs-on: ubuntu-latest
 
+    # THIS is the fix: make repo root importable for scripts and tests
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -28,11 +32,13 @@ jobs:
           echo "=== ROOT ==="
           ls -la
           echo ""
+          echo "=== src ==="
+          ls -la src || true
+          echo ""
           echo "=== scripts ==="
           ls -la scripts || true
           echo ""
-          echo "=== tests ==="
-          ls -la tests || true
+          echo "PYTHONPATH=$PYTHONPATH"
 
       - name: Run tests
         run: |
