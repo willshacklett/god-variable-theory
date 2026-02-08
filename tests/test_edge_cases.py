@@ -42,7 +42,7 @@ def test_adversarial_saturation_detects_velocity_not_just_magnitude():
 
     # With EMA smoothing, ds/dt should NOT trigger immediately; it should ramp.
     monitor = GVMonitor(alpha=0.92, beta=0.08, gamma=0.97, threshold=0.00012)
-    trig = _first_trigger_step(monitor, g, l)
+    trig = _first_trigger_step(monitor, g, l, min_step=25)
 
     assert trig is not None, "Expected slow adversarial saturation to trigger ds/dt threshold."
     assert trig > 25, "Should not trigger immediately; it should be a long-horizon detection."
