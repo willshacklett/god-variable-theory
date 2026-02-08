@@ -29,7 +29,6 @@ def test_swarm_amplification_triggers_after_drift_kick():
         seed=7,
     )
 
-    # Smoothed derivative: should ramp and trigger after drift begins
     monitor = GVMonitor(alpha=0.92, beta=0.08, gamma=0.95, threshold=0.0025)
     trig = _first_trigger_step(monitor, g, l)
 
@@ -40,7 +39,6 @@ def test_swarm_amplification_triggers_after_drift_kick():
 def test_adversarial_saturation_detects_velocity_not_just_magnitude():
     g, l = adversarial_saturation_run(steps=650, eps=0.00055, wobble=0.00010, seed=11)
 
-    # With EMA smoothing, ds/dt should NOT trigger immediately; it should ramp.
     monitor = GVMonitor(alpha=0.92, beta=0.08, gamma=0.97, threshold=0.00012)
     trig = _first_trigger_step(monitor, g, l, min_step=25)
 
@@ -56,9 +54,6 @@ def test_human_ai_feedback_loop_shows_silent_recoverability_loss():
         seed=23,
     )
 
-    # Entropy stays bounded (no explosion)
     assert max(g) < 0.69 and max(l) < 0.69
-
-    # Recoverability silently degrades
     assert r[0] > 0.90
     assert r[-1] < 0.40, "Expected significant recoverability loss over long horizon."
