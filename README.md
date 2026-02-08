@@ -80,6 +80,9 @@ Toy simulation (`gv_simulation.py`) with realistic energy density profile (matte
 - Coherence vs. Decoherence (Cancer Application)  
   ![Cancer Coherence Waves](cancer-coherence-waves.png)
 
+## Paper
+Full draft: [PAPER.md](./PAPER.md) — Prepared for arXiv submission.
+
 ## Next Steps / Contributions Welcome
 
 1. Refine derivations for other constants (fine-structure α, G, ℏ)
