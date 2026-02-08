@@ -30,7 +30,11 @@ jobs:
         run: |
           python scripts/collect_ci_metrics.py
 
-      - name: Upload metrics artifacts (CSV)
+      - name: Generate plots (R vs cumulative |ΔGv|)
+        run: |
+          python scripts/plot_ci_metrics.py
+
+      - name: Upload metrics artifacts (CSV + plots)
         uses: actions/upload-artifact@v4
         with:
           name: gv-ci-metrics
