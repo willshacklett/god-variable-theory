@@ -2,8 +2,8 @@ name: GV Edge-Case Tests
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
+  schedule:
+    - cron: "*/15 * * * *"
 
 jobs:
   gv-ci:
