@@ -95,28 +95,29 @@ def adversarial_saturation_run(
     eps: float = 0.00055,
     wobble: float = 0.00010,
     seed: int = 11,
-) -> Tuple[List[float], List[float]]:
+) -> tuple[list[float], list[float]]:
     """
     Edge case #2: Slow adversarial saturation that should NOT trip immediately,
     but should ramp into detection over time when using a smoothed velocity.
 
-    We add a warm-up ramp so the earliest steps are intentionally quiet.
+    Both drift (eps) and noise (wobble) are ramped so early steps are intentionally quiet.
     """
     rng = random.Random(seed)
-    g: List[float] = []
-    l: List[float] = []
+    g: list[float] = []
+    l: list[float] = []
 
     global_e = 0.45
     local_e = 0.35
 
     for t in range(steps):
-        # Warm-up ramp: start near 0 and approach 1 over ~50 steps
-        ramp = min(1.0, t / 50.0)
+        # Warm-up ramp: start near 0 and approach 1 over ~80 steps
+        ramp = min(1.0, t / 80.0)
 
-        global_e += (eps * ramp) + rng.uniform(-wobble, wobble)
+        # Ramp BOTH drift and noise so early steps are intentionally quiet
+        global_e += (eps * ramp) + rng.uniform(-wobble * ramp, wobble * ramp)
         global_e = min(0.69, max(0.10, global_e))
 
-        local_e += 0.55 * (global_e - local_e) + rng.uniform(-wobble, wobble)
+        local_e += 0.55 * (global_e - local_e) + rng.uniform(-wobble * ramp, wobble * ramp)
         local_e = min(0.69, max(0.10, local_e))
 
         g.append(global_e)
