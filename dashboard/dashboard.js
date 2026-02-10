@@ -1,11 +1,6 @@
-// Dashboard reads repo CSV and renders:
-// 1) tiles per scenario (latest row)
-// 2) a "latest rows" table
-// 3) a "tail rows" table (last 50 rows)
-//
-// CSV path choice:
-// - First tries the binned file (recommended)
-// - Falls back to summary_history.csv if binned doesn't exist
+// dashboard.js (updated)
+// Adds support for SAFE_REFUSAL + gv_state + goodness_ratio if present
+
 const CSV_CANDIDATES = [
   "../data/longitudinal/summary_history_binned.csv",
   "../data/longitudinal/summary_history.csv",
@@ -30,39 +25,44 @@ function fmt(x, digits = 4) {
   return n.toFixed(digits);
 }
 
-function clsForRisk(r) {
-  // heuristic mapping:
-  // - if recoverability is low => bad
-  // - if cum_abs_dgv or peak_dsdt is high => warn/bad
-  const rec = Number(r.final_recoverability);
-  const dgv = Number(r.final_cum_abs_dgv);
-  const peak = Number(r.peak_abs_ds_dt);
+function labelForRow(r) {
+  const action = (r.safety_action || "").toUpperCase();
+  if (action === "SAFE_REFUSAL") return "SAFE";
+  // Prefer explicit gv_state if present
+  const gvState = (r.gv_state || "").toUpperCase();
+  if (gvState === "GOOD") return "GOOD";
+  if (gvState === "BAD") return "BAD";
+  return ""; // fall back to heuristic
+}
 
-  // Some binned files may rename columns; try alternates
-  const rec2 = Number(r.recoverability ?? r.final_recoverability);
-  const dgv2 = Number(r.cum_abs_dgv ?? r.final_cum_abs_dgv ?? r.final_cum_dgv);
-  const peak2 = Number(r.peak_ds_dt ?? r.peak_abs_ds_dt ?? r.peak_abs_dsdt);
+function clsForRow(r) {
+  const action = (r.safety_action || "").toUpperCase();
+  if (action === "SAFE_REFUSAL") return "good"; // SAFE is good behavior
 
-  const R = Number.isFinite(rec) ? rec : rec2;
-  const D = Number.isFinite(dgv) ? dgv : dgv2;
-  const P = Number.isFinite(peak) ? peak : peak2;
+  const gvState = (r.gv_state || "").toUpperCase();
+  if (gvState === "GOOD") return "good";
+  if (gvState === "BAD") return "bad";
 
-  if (Number.isFinite(R)) {
-    if (R < 0.35) return "bad";
-    if (R < 0.60) return "warn";
+  // heuristic mapping (fallback if gv_state not present)
+  const rec = Number(r.final_recoverability ?? r.recoverability);
+  const dgv = Number(r.final_cum_abs_dgv ?? r.cum_abs_dgv ?? r.final_cum_dgv);
+  const peak = Number(r.peak_abs_ds_dt ?? r.peak_ds_dt ?? r.peak_abs_dsdt);
+
+  if (Number.isFinite(rec)) {
+    if (rec < 0.35) return "bad";
+    if (rec < 0.60) return "warn";
   }
-  if (Number.isFinite(D)) {
-    if (D > 0.9) return "bad";
-    if (D > 0.4) return "warn";
+  if (Number.isFinite(dgv)) {
+    if (dgv > 0.9) return "bad";
+    if (dgv > 0.4) return "warn";
   }
-  if (Number.isFinite(P)) {
-    if (P > 0.005) return "warn";
+  if (Number.isFinite(peak)) {
+    if (peak > 0.005) return "warn";
   }
   return "good";
 }
 
 function parseCSV(text) {
-  // Minimal CSV parser that handles commas + quotes.
   const lines = text.replace(/\r/g, "").split("\n").filter(Boolean);
   if (!lines.length) return { headers: [], rows: [] };
 
@@ -103,7 +103,6 @@ function parseCSV(text) {
 }
 
 function pickLatestPerScenario(rows) {
-  // Prefer ordering by run_created_utc, else by run_number, else by appearance order.
   const score = (r) => {
     const t = r.run_created_utc || r.run_created || r.created_utc || "";
     const n = Number(r.run_number);
@@ -120,8 +119,6 @@ function pickLatestPerScenario(rows) {
     const cur = byScenario.get(scen);
     const [t1, n1] = score(cur);
     const [t2, n2] = score(r);
-
-    // Compare time first (ISO string sorts), then run_number
     if ((t2 && t2 > t1) || (t2 === t1 && n2 > n1)) {
       byScenario.set(scen, r);
     }
@@ -132,16 +129,36 @@ function pickLatestPerScenario(rows) {
     .sort((a, b) => a.scenario.localeCompare(b.scenario));
 }
 
+function sortNewestFirst(rows) {
+  const pickTime = (r) => r.run_created_utc || r.run_created || r.created_utc || "";
+  const pickRun = (r) => {
+    const n = Number(r.run_number);
+    return Number.isFinite(n) ? n : -1;
+  };
+
+  return [...rows].sort((a, b) => {
+    const ta = pickTime(a), tb = pickTime(b);
+    if (tb !== ta) return tb.localeCompare(ta);
+    return pickRun(b) - pickRun(a);
+  });
+}
+
 function renderTiles(latest) {
   const tiles = $("tiles");
   tiles.innerHTML = "";
 
   for (const { scenario, row } of latest) {
-    const riskClass = clsForRisk(row);
+    const riskClass = clsForRow(row);
+    const label = labelForRow(row) || riskClass.toUpperCase();
 
     const rec = row.final_recoverability ?? row.recoverability ?? "";
     const dgv = row.final_cum_abs_dgv ?? row.cum_abs_dgv ?? "";
     const peak = row.peak_abs_ds_dt ?? row.peak_ds_dt ?? "";
+
+    const action = row.safety_action ?? "";
+    const reason = row.interlock_reason ?? "";
+    const ratio = row.goodness_ratio ?? "";
+
     const run = row.run_number ?? "";
     const sha = (row.git_sha ?? "").slice(0, 10);
     const when = row.run_created_utc ?? "";
@@ -151,7 +168,7 @@ function renderTiles(latest) {
     el.innerHTML = `
       <div class="k">
         <div class="name">${scenario}</div>
-        <div class="pill ${riskClass}">${riskClass.toUpperCase()}</div>
+        <div class="pill ${riskClass}">${label}</div>
       </div>
 
       <div class="metric">
@@ -169,6 +186,8 @@ function renderTiles(latest) {
 
       <div class="small">
         peak_abs_ds_dt: <span class="${riskClass}">${fmt(peak, 6)}</span><br/>
+        safety_action: <code>${action || "—"}</code> ${reason ? `(${reason})` : ""}<br/>
+        goodness_ratio: <code>${ratio || "—"}</code><br/>
         run: <code>${run}</code> &nbsp; sha: <code>${sha || "—"}</code><br/>
         <span class="muted">${when || ""}</span>
       </div>
@@ -207,31 +226,15 @@ function renderTable(tableId, headers, rows, limit) {
 async function fetchFirstAvailableCSV() {
   for (const p of CSV_CANDIDATES) {
     try {
-      const url = `${p}?_=${Date.now()}`; // cache-buster
+      const url = `${p}?_=${Date.now()}`;
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) continue;
       const text = await res.text();
       if (!text.trim()) continue;
       return { path: p, text };
-    } catch (e) {
-      // try next
-    }
+    } catch (e) {}
   }
   throw new Error("No CSV found. Expected data/longitudinal/*.csv in repo.");
-}
-
-function sortNewestFirst(rows) {
-  const pickTime = (r) => r.run_created_utc || r.run_created || r.created_utc || "";
-  const pickRun = (r) => {
-    const n = Number(r.run_number);
-    return Number.isFinite(n) ? n : -1;
-  };
-
-  return [...rows].sort((a, b) => {
-    const ta = pickTime(a), tb = pickTime(b);
-    if (tb !== ta) return tb.localeCompare(ta);
-    return pickRun(b) - pickRun(a);
-  });
 }
 
 async function loadAndRender() {
@@ -250,16 +253,17 @@ async function loadAndRender() {
     return;
   }
 
-  // Sort newest first for tables
   const newest = sortNewestFirst(state.rows);
-
-  // Pick latest per scenario for tiles + latest table
   const latestPerScenario = pickLatestPerScenario(newest);
+
   renderTiles(latestPerScenario);
 
-  // Latest table headers: pick a useful subset first, else fallback to all
   const preferred = [
     "scenario",
+    "safety_action",
+    "interlock_reason",
+    "gv_state",
+    "goodness_ratio",
     "final_recoverability",
     "final_cum_abs_dgv",
     "peak_abs_ds_dt",
@@ -267,7 +271,6 @@ async function loadAndRender() {
     "monitor_alpha",
     "monitor_beta",
     "monitor_gamma",
-    "monitor_threshold",
     "run_number",
     "run_created_utc",
     "git_sha",
@@ -278,11 +281,8 @@ async function loadAndRender() {
   const latestRows = latestPerScenario.map((x) => x.row);
   renderTable("latestTable", useLatestHeaders, latestRows);
 
-  // Tail table: show last 50 rows, newest first
-  const tailHeaders = useLatestHeaders; // keep consistent
-  renderTable("tailTable", tailHeaders, newest, 50);
+  renderTable("tailTable", useLatestHeaders, newest, 50);
 
-  // Meta + footer
   $("meta").textContent = `rows: ${state.rows.length} • scenarios: ${latestPerScenario.length}`;
   $("csvPathLabel").textContent = path;
 
