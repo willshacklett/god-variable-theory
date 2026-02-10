@@ -3,76 +3,73 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>God Variable Theory — Longitudinal Dashboard</title>
+  <title>GV Dashboard — Longitudinal Monitor</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>God Variable Theory — Longitudinal Dashboard</h1>
+      <div class="title-row">
+        <h1>GV Dashboard</h1>
+        <span class="badge">Longitudinal CI Monitor</span>
+      </div>
       <p class="sub">
-        Live view of <code>data/longitudinal/summary_history.csv</code>
-        <span id="status" class="pill">loading…</span>
+        Live view of <code>summary_history_binned.csv</code> (auto-refresh).
       </p>
 
       <div class="controls">
-        <label>
-          Auto-refresh
-          <select id="refresh">
-            <option value="0">Off</option>
-            <option value="10">10s</option>
-            <option value="30" selected>30s</option>
-            <option value="60">60s</option>
-          </select>
+        <button id="btnReload" class="btn">Reload</button>
+        <label class="toggle">
+          <input id="autoRefresh" type="checkbox" checked />
+          <span>Auto-refresh (60s)</span>
         </label>
-
-        <label>
-          Scenario
-          <select id="scenario">
-            <option value="">All</option>
-          </select>
-        </label>
-
-        <label>
-          Sort
-          <select id="sort">
-            <option value="run_created_utc:desc" selected>Newest first</option>
-            <option value="final_recoverability:asc">Recoverability (low→high)</option>
-            <option value="final_recoverability:desc">Recoverability (high→low)</option>
-            <option value="final_cum_abs_dgv:desc">Cum |ΔGV| (high→low)</option>
-            <option value="final_cum_abs_dgv:asc">Cum |ΔGV| (low→high)</option>
-          </select>
-        </label>
-
-        <button id="reload">Reload now</button>
+        <span id="status" class="status">Loading…</span>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="grid">
-      <div class="card">
-        <h2>Latest snapshot</h2>
-        <div id="kpis" class="kpis"></div>
-      </div>
+  <main>
+    <div class="wrap">
+      <section class="grid" id="tiles"></section>
 
-      <div class="card">
-        <h2>Rows</h2>
+      <section class="card">
+        <div class="card-h">
+          <h2>Latest rows (by scenario)</h2>
+          <div class="muted" id="meta"></div>
+        </div>
         <div class="table-wrap">
-          <table id="table">
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
+          <table id="latestTable">
+            <thead></thead>
+            <tbody></tbody>
           </table>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <footer class="foot">
-      <span>Source: <code id="src"></code></span>
-      <span class="muted">Tip: this updates whenever CI commits new longitudinal rows.</span>
-    </footer>
+      <section class="card">
+        <div class="card-h">
+          <h2>History (last 50 rows)</h2>
+          <div class="muted">This is the raw tail of the CSV so you can sanity-check it.</div>
+        </div>
+        <div class="table-wrap">
+          <table id="tailTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          Source:
+          <code id="csvPathLabel"></code>
+        </div>
+        <div class="muted">
+          Tip: after Step 2, this will be hosted on GitHub Pages and update continuously.
+        </div>
+      </footer>
+    </div>
   </main>
 
-  <script src="./app.js"></script>
+  <script src="./dashboard.js"></script>
 </body>
 </html>
