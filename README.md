@@ -61,7 +61,7 @@ To elevate GV from conceptual unification to predictive framework:
 
 Where:
 - J_GV encodes constraint-gradient transport
-- S(GV) captures curvature-driven source terms
+- S(GV) captures curvature-driven source dynamics
 
 ---
 
