@@ -50,6 +50,59 @@ make demo
 
 ---
 
+## Quantitative Program
+
+To elevate GV from conceptual unification to predictive framework:
+
+### 1. Define GV flow equation
+
+∂ₜ GV = −∇·J_GV + S(GV)
+
+Where:
+- J_GV encodes constraint-gradient transport
+- S(GV) captures curvature-driven source terms
+
+---
+
+### 2. Embed in FLRW Cosmology
+
+H² = (8πG / 3) ρ_eff(GV)
+
+Test:
+- w(z)
+- Λ(z)
+- Structure growth
+
+---
+
+### 3. Quantum Field Embedding
+
+Derive GV-modified EFT:
+
+- Higgs loop corrections
+- UV → IR suppression factor
+- Strong CP θ-dynamics under gradient relaxation
+
+---
+
+### 4. Black Hole Sector
+
+Derive:
+- Horizon GV saturation condition
+- Entropy scaling from bounded gradients
+- Evaporation spectrum vs Hawking
+
+---
+
+### 5. Inflation / Early Universe
+
+Compute:
+- Spectral tilt n_s
+- Tensor-to-scalar ratio r
+- Non-Gaussianity f_NL
+
+---
+
 ## Theory (Preserved)
 
 The full theoretical foundation has been preserved verbatim and moved here:
