@@ -1,12 +1,13 @@
-# God Variable Theory (Gv) — The Hub
+# God Variable (GV) — The Hub
 
-**God Variable (Gv)** is a proposed universal scalar for **constraint strain / survivability**, spanning:
-- long-horizon AI safety (drift, recoverability, enforcement)
-- runtime monitoring (operational strain)
-- simulations (replication / stability)
-- theory (Λ-style damping, entropy bounds)
+God Variable (GV) is a proposed scalar framework modeling **constraint strain and survivability dynamics** across engineered and physical systems.
 
-This repo is the **one-click hub** for the entire ecosystem.
+GV operates at two layers:
+
+1. **Operational Layer** — AI safety, CI enforcement, runtime monitoring  
+2. **Theoretical Layer** — constraint-driven dynamics in cosmology and field theory  
+
+This repository is the one-click hub for the entire ecosystem.
 
 ---
 
