@@ -66,6 +66,17 @@ Toy simulation (`gv_simulation.py`) with realistic energy density profile (matte
 
 *Figure 2: Energy density evolution proxy (early matter/radiation dominance → late dark energy floor).*
 
+## Cosmology track: curvature-gated f(R) and structure growth
+
+This track builds a “left-hand-side-only” modification of GR designed to deviate only at ultra-low curvature,
+while matching CMB + LSS via a heavy scalaron (β<<1) on observed scales.
+
+- Canonical derivation + perturbations + growth + stability:
+  https://github.com/willshacklett/gv-field-equations/blob/main/cosmology/gated_fr_growth.md
+
+- GV / Constraint-Field framing + falsification checklist:
+  https://github.com/willshacklett/Constraint-Field-Theory/blob/main/theory/gv_constraint_activation_in_gravity.md
+
 ## Key Diagrams
 
 - Ontological Hierarchy  
