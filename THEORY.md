@@ -68,13 +68,14 @@ Toy simulation (`gv_simulation.py`) with realistic energy density profile (matte
 
 ## Cosmology track: curvature-gated f(R) and structure growth
 
-This track builds a “left-hand-side-only” modification of GR designed to deviate only at ultra-low curvature,
-while matching CMB + LSS via a heavy scalaron (β<<1) on observed scales.
+A left-hand-side-only modification of GR that deviates only at ultra-low curvature, designed to remain consistent with CMB + LSS by keeping the scalaron heavy (β ≪ 1) on observed scales.
 
-- Canonical derivation + perturbations + growth + stability:
+- **Curvature-gated f(R): perturbations, growth, stability (canonical math)**
+  Explains μ, η, Σ, scalaron mass scaling, explicit f_R/f_RR, and a viability checklist.
   https://github.com/willshacklett/gv-field-equations/blob/main/cosmology/gated_fr_growth.md
 
-- GV / Constraint-Field framing + falsification checklist:
+- **GV constraint activation in gravity (CFT framing + falsification checklist)**
+  Defines the curvature gate as a constraint activation law and lists minimal observational falsifiers.
   https://github.com/willshacklett/Constraint-Field-Theory/blob/main/theory/gv_constraint_activation_in_gravity.md
 
 ## Key Diagrams
