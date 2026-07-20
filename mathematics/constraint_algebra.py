@@ -30,6 +30,26 @@ class Constraint:
         object.__setattr__(self, "universe", universe_set)
         object.__setattr__(self, "allowed", allowed_set)
 
+    def _check_universe(self, other: "Constraint") -> None:
+        if self.universe != other.universe:
+            raise ValueError("constraints must share a universe")
+
+    def merge(self, other: "Constraint") -> "Constraint":
+        self._check_universe(other)
+
+        return Constraint(
+            self.universe,
+            self.allowed & other.allowed,
+        )
+
+    def release(self, other: "Constraint") -> "Constraint":
+        self._check_universe(other)
+
+        return Constraint(
+            self.universe,
+            self.allowed | other.allowed,
+        )
+
     @property
     def viable(self) -> bool:
         return bool(self.allowed)
@@ -51,16 +71,21 @@ if __name__ == "__main__":
         "failed",
     }
 
-    system = Constraint(
+    operational = Constraint(
         states,
-        {
-            "stable",
-            "degraded",
-            "recovering",
-        },
+        {"stable", "degraded", "recovering"},
     )
 
+    safe = Constraint(
+        states,
+        {"stable", "recovering"},
+    )
+
+    merged = operational.merge(safe)
+    released = operational.release(safe)
+
     print("GV Constraint Mathematics")
-    print(f"Viable   : {system.viable}")
-    print(f"Capacity : {system.capacity:.3f}")
-    print(f"Pressure : {system.pressure:.3f}")
+    print("Operational:", sorted(operational.allowed))
+    print("Safe       :", sorted(safe.allowed))
+    print("Merge      :", sorted(merged.allowed))
+    print("Release    :", sorted(released.allowed))
