@@ -41,6 +41,9 @@ htmlcov/
 .tox/
 .nox/
 .coverage
+
+# Generated experiment artifacts
+outputs/
 .coverage.*
 .cache
 nosetests.xml
