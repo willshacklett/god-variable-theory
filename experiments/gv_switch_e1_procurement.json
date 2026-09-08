@@ -1,0 +1,57 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "prototype": "E1-A",
+  "status": "PRE_PURCHASE",
+  "buy_now": [
+    {
+      "item": "copper_or_copper_clad",
+      "quantity": "enough for multiple 5x5 cm plates",
+      "planning_cost_usd_min": 10,
+      "planning_cost_usd_max": 30
+    },
+    {
+      "item": "panel_mount_bnc_connectors",
+      "quantity": 6,
+      "planning_cost_usd_min": 15,
+      "planning_cost_usd_max": 40
+    },
+    {
+      "item": "50_ohm_coax_cables",
+      "quantity": 4,
+      "planning_cost_usd_min": 30,
+      "planning_cost_usd_max": 100
+    },
+    {
+      "item": "50_ohm_terminators_and_adapters",
+      "planning_cost_usd_min": 20,
+      "planning_cost_usd_max": 60
+    },
+    {
+      "item": "nonconductive_mount_and_orientation_fixture",
+      "planning_cost_usd_min": 20,
+      "planning_cost_usd_max": 90
+    },
+    {
+      "item": "shielding_materials",
+      "planning_cost_usd_min": 30,
+      "planning_cost_usd_max": 150
+    },
+    {
+      "item": "low_voltage_trigger_source",
+      "planning_cost_usd_min": 50,
+      "planning_cost_usd_max": 500
+    }
+  ],
+  "hold_off": [
+    "serious_high_speed_oscilloscope",
+    "six_sensor_copies",
+    "rf_amplifier",
+    "exotic_detector_hardware"
+  ],
+  "initial_budget_excluding_serious_scope": {
+    "minimum_usd": 200,
+    "maximum_usd": 800
+  },
+  "warning": "These are planning estimates only. Recheck current specifications and prices before purchase."
+}
