@@ -1,0 +1,59 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "document": "detector_modality_matrix",
+  "status": "PRE_PROTOTYPE",
+  "modalities": [
+    {
+      "id": "E",
+      "name": "electric_transient",
+      "physical_quantity": "electric field or voltage transient",
+      "high_speed": true,
+      "priority": "HIGH",
+      "prototype_order": 1
+    },
+    {
+      "id": "B",
+      "name": "magnetic_pickup",
+      "physical_quantity": "changing magnetic field",
+      "high_speed": true,
+      "priority": "HIGH",
+      "prototype_order": 2
+    },
+    {
+      "id": "O",
+      "name": "optical_photodiode",
+      "physical_quantity": "optical intensity",
+      "high_speed": true,
+      "priority": "HIGH_CALIBRATION",
+      "prototype_order": 3
+    },
+    {
+      "id": "A",
+      "name": "acoustic",
+      "physical_quantity": "pressure variation",
+      "high_speed": false,
+      "priority": "REQUIRED_CONTROL"
+    },
+    {
+      "id": "V",
+      "name": "vibration",
+      "physical_quantity": "acceleration or mechanical vibration",
+      "high_speed": false,
+      "priority": "REQUIRED_CONTROL"
+    },
+    {
+      "id": "T",
+      "name": "thermal",
+      "physical_quantity": "temperature",
+      "high_speed": false,
+      "priority": "REQUIRED_CONTROL"
+    }
+  ],
+  "first_prototypes": [
+    "electric_transient",
+    "magnetic_pickup",
+    "optical_photodiode"
+  ],
+  "unknown_coupling_warning": "No listed modality is a GV detector. Null results constrain only the tested observables and apparatus sensitivity."
+}
