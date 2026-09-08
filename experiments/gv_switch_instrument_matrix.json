@@ -1,0 +1,47 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "document": "instrument_selection_matrix",
+  "requirements": {
+    "preferred_analog_channels": 6,
+    "minimum_serious_sample_rate_gsps": 5.0,
+    "target_timing_sigma_ns": 1.0,
+    "preferred_timing_sigma_ns": 0.5,
+    "external_trigger_required": true,
+    "raw_waveform_export_required": true,
+    "automation_preferred": true
+  },
+  "candidates": [
+    {
+      "name": "Analog Discovery 3",
+      "channels": 2,
+      "sample_rate_msps": 125,
+      "role": "learning_and_slow_calibration",
+      "serious_c_like_timing": false
+    },
+    {
+      "name": "Teledyne T3DSO3000 family",
+      "channels": 4,
+      "sample_rate_gsps": 5.0,
+      "role": "entry_serious_bench",
+      "serious_c_like_timing": true,
+      "channel_count_penalty": true
+    },
+    {
+      "name": "Siglent SDS5036X HD",
+      "channels": 6,
+      "sample_rate_gsps": 5.0,
+      "role": "preferred_value_candidate",
+      "serious_c_like_timing": true
+    },
+    {
+      "name": "Tektronix MSO46B",
+      "channels": 6,
+      "sample_rate_gsps": 6.25,
+      "role": "preferred_lab_candidate",
+      "serious_c_like_timing": true
+    }
+  ],
+  "decision_status": "NOT_SELECTED",
+  "warning": "Sample rate alone does not establish timing accuracy. Channel skew, timebase accuracy, bandwidth, trigger jitter, and calibration must be verified."
+}
