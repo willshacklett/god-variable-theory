@@ -1,114 +1,336 @@
-# God Variable (GV) — The Hub
+# God Variable (GV)
 
-God Variable (GV) is a proposed scalar framework modeling **constraint strain and survivability dynamics** across engineered and physical systems.
+**God Variable (GV)** is an experimental research program exploring whether a common constraint-based framework can describe survivability, degradation, and state transitions across engineered and physical systems.
 
-GV operates at two layers:
+The project currently has two distinct tracks:
 
-1. **Operational Layer** — AI safety, CI enforcement, runtime monitoring  
-2. **Theoretical Layer** — constraint-driven dynamics in cosmology and field theory  
+1. **Operational GV** — measurable constraint strain, drift, recoverability, CI scoring, and runtime monitoring.
+2. **Theoretical GV** — speculative work asking whether a deeper constraint or activation principle could have physical meaning.
 
-This repository is the one-click hub for the entire ecosystem.
+The operational work is software and engineering.
+
+The theoretical work is a hypothesis.
+
+They should not be treated as equivalent evidence.
 
 ---
 
-## Start Here (2 minutes)
+## Current Research Focus — The GV Switch
 
-### 1) See GV detect drift before tests fail (fastest proof)
-➡️ **GV Drift Demo**  
+The newest theoretical program is the **GV Switch Hypothesis**.
+
+The core question is deliberately narrow:
+
+> Could a reproducibly triggered physical event produce a measurable response that survives known electromagnetic, timing, cable, acoustic, mechanical, thermal, and instrumental explanations?
+
+The conceptual analogy is a switch:
+
+\[
+\text{latent possibility}
+\rightarrow
+\text{activation}
+\rightarrow
+\text{lawful physical evolution}
+\]
+
+This does **not** assume that a literal switch exists in nature.
+
+It provides a falsifiable experimental framing for asking whether any reproducible physical residual exists after conventional mechanisms are excluded.
+
+See:
+
+**theory/gv_switch_hypothesis.md**
+
+---
+
+## Scientific Status
+
+### What has been done
+
+The repository now contains:
+
+- GV Switch hypothesis
+- propagation timing simulations
+- Monte Carlo calibration
+- adversarial-null testing
+- documented failed classifiers
+- independent clock-artifact crosscheck
+- electromagnetic isolation framework
+- environmental isolation framework
+- master synthetic protocol
+- experimental preregistration
+- benchtop roadmap
+- Phase 0 hardware specification
+- detector modality framework
+- E1 electrical transient sensor specification
+- randomized and blocked trial designs
+- E1 calibration software
+- E1 confirmatory preregistration
+- E1 bench assembly specification
+- E1 procurement plan
+
+### What has NOT been done
+
+No physical experiment has produced evidence for GV.
+
+No unexplained propagation signal has been observed.
+
+No new particle, field, force, or physical constant has been detected.
+
+Synthetic tests validate only whether the experimental logic behaves correctly against the models encoded in the simulations.
+
+---
+
+## Experimental Standard
+
+The strongest result currently permitted by the GV Switch protocol is:
+
+`UNEXPLAINED PROPAGATION CANDIDATE`
+
+That would mean only:
+
+> A reproducible signal survived the conventional mechanisms actually tested and requires independent replication.
+
+It would **not** mean:
+
+> GV detected.
+
+Unknown conventional mechanisms could still remain.
+
+---
+
+# Phase 0 — Learn How the Apparatus Can Fool Us
+
+Before any unexplained-signal search, the apparatus must correctly identify known mechanisms.
+
+Required Phase 0 controls include:
+
+- trigger timing
+- cable delay
+- clock/channel bias
+- electromagnetic coupling
+- acoustic propagation
+- mechanical vibration
+- thermal drift
+- active/sham trials
+
+The current Phase 0 acceptance target is:
+
+\[
+7/7
+\]
+
+known-channel validation tests passed before Phase 1 is allowed.
+
+See:
+
+**experiments/GV_SWITCH_PHASE0_HARDWARE_SPEC.md**
+
+---
+
+# Prototype E1-A
+
+The first physical prototype is intentionally ordinary.
+
+**E1-A** is a passive electrical transient sensor designed to characterize electromagnetic pickup from the trigger apparatus.
+
+It is **not** a GV detector.
+
+Initial architecture:
+
+- passive 5 cm × 5 cm copper pickup plate
+- 50-ohm coaxial signal path
+- CH1 trigger reference
+- CH2 E1 sensor
+- initial source distance of 0.25 m
+- low-voltage, low-energy trigger
+- no amplifier
+
+E1-A must characterize:
+
+- timing jitter
+- cable delay
+- oscilloscope channel skew
+- shielding response
+- orientation response
+- noise floor
+- sham false-positive rate
+- saturation behavior
+
+before it can be used as a trusted control instrument.
+
+See:
+
+**experiments/GV_SWITCH_ELECTRIC_SENSOR_SPEC.md**
+
+**experiments/GV_SWITCH_E1_BENCH_ASSEMBLY.md**
+
+**experiments/GV_SWITCH_E1_PREREGISTRATION.md**
+
+---
+
+# Why the Failed Tests Matter
+
+Early synthetic classifiers initially appeared highly successful against simple null models.
+
+Harder adversarial tests broke them.
+
+Cable artifacts and clock bias could imitate apparent propagation.
+
+A free linear timing model also demonstrated a fundamental problem:
+
+\[
+t=t_0+\beta d
+\]
+
+from an instrumental bias can resemble:
+
+\[
+t=t_0+\frac{d}{v}
+\]
+
+from physical propagation.
+
+That failure changed the protocol.
+
+The current design therefore uses independent physical interventions rather than relying on timing fits alone.
+
+See:
+
+**experiments/GV_SWITCH_FAILURE_NOTES.md**
+
+Negative results and failed methods are retained as part of the scientific record.
+
+---
+
+# Operational GV
+
+The operational side of GV predates the GV Switch work and addresses a different problem:
+
+> Can cumulative constraint strain, degradation, and loss of recoverability be measured before conventional pass/fail systems notice failure?
+
+Start here:
+
+### GV Drift Demo
+
 https://github.com/willshacklett/gv-drift-demo
 
-### 2) Install survivability-aware CI scoring (real pipeline value)
-➡️ **GodScore CI (GitHub Action)**  
+Minimal demonstration of early drift detection.
+
+### GodScore CI
+
 https://github.com/willshacklett/godscore-ci
 
-### 3) Monitor live runtime strain in agent systems
-➡️ **GvAI Safety Systems**  
+Survivability-aware CI scoring and optional enforcement.
+
+### GvAI Safety Systems
+
 https://github.com/willshacklett/gvai-safety-systems
 
----
-
-## One-Click: Run the Ecosystem in Codespaces
-
-1) Click **Code → Codespaces → Create codespace on main**  
-2) Run:
-
-```bash
-make demo
-```
+Runtime monitoring for AI and agent systems.
 
 ---
 
-## The Ecosystem Map
+# Original GV Framework
 
-| Repo | What it is | Why it matters |
-|------|------------|----------------|
-| **gv-drift-demo** | Minimal proof: GV flags drift early | Shows value in minutes |
-| **godscore-ci** | CI trust score + optional enforcement | Turns GV into a real gate |
-| **gvai-safety-systems** | Runtime monitoring for AI/agents | GV in production contexts |
-| **gv-engine** | Core scoring / signal primitives | Shared logic layer |
-| **gv-watchdog** | CLI guardrail tool | Operational adoption |
-| **cft-cancer-sim** | Bio simulation direction | Cross-domain survivability |
+The broader GV framework proposes a scalar representation of total constraint structure.
 
----
+A core conceptual form preserved in the theory is:
 
-## Quantitative Program
+\[
+G_v =
+\int \rho_{\text{total}}(x,t)\,dV
++
+\alpha
+\]
 
-To elevate GV from conceptual unification to predictive framework:
+where the interpretation of \(\alpha\) remains theoretical.
 
-### 1. Define GV flow equation
+See:
 
-∂ₜ GV = −∇·J_GV + S(GV)
+**THEORY.md**
 
-Where:
-- J_GV encodes constraint-gradient transport
-- S(GV) captures curvature-driven source dynamics
+The equation is a proposed framework, not an experimentally established law of physics.
 
 ---
 
-### 2. Embed in FLRW Cosmology
+# Longer-Term Theoretical Program
 
-H² = (8πG / 3) ρ_eff(GV)
+Possible theoretical directions include:
 
-Test:
-- w(z)
-- Λ(z)
-- Structure growth
+### Constraint-flow dynamics
+
+\[
+\partial_t G_v =
+-\nabla\cdot J_{GV}
++
+S(G_v)
+\]
+
+### Cosmological embedding
+
+Potential relationships to:
+
+- FLRW evolution
+- effective energy density
+- structure growth
+- early-universe dynamics
+
+### Quantum-field interpretation
+
+Possible questions involving:
+
+- effective field theory
+- symmetry behavior
+- UV/IR relationships
+
+### Black-hole sector
+
+Possible questions involving:
+
+- horizon constraints
+- entropy
+- evaporation
+
+These remain speculative until they produce quantitative predictions distinguishable from established physics.
 
 ---
 
-### 3. Quantum Field Embedding
+# Repository Principle
 
-Derive GV-modified EFT:
+The project follows a simple hierarchy:
 
-- Higgs loop corrections
-- UV → IR suppression factor
-- Strong CP θ-dynamics under gradient relaxation
+\[
+\text{idea}
+\rightarrow
+\text{model}
+\rightarrow
+\text{adversarial test}
+\rightarrow
+\text{preregistration}
+\rightarrow
+\text{instrument calibration}
+\rightarrow
+\text{physical experiment}
+\rightarrow
+\text{replication}
+\]
 
----
-
-### 4. Black Hole Sector
-
-Derive:
-- Horizon GV saturation condition
-- Entropy scaling from bounded gradients
-- Evaporation spectrum vs Hawking
-
----
-
-### 5. Inflation / Early Universe
-
-Compute:
-- Spectral tilt n_s
-- Tensor-to-scalar ratio r
-- Non-Gaussianity f_NL
+A later step does not become valid merely because an earlier one succeeded.
 
 ---
 
-## Theory (Preserved)
+# Current Milestone
 
-The full theoretical foundation has been preserved verbatim and moved here:
+The current milestone is:
 
-➡️ **THEORY.md**
+> Build and calibrate E1-A against known electrical and instrumental effects.
+
+Not:
+
+> Detect GV.
+
+If E1-A reveals that an apparent fast signal is ordinary electromagnetic pickup, that is a successful Phase 0 result.
 
 ---
 
@@ -121,4 +343,4 @@ it needs constraints that outlive intent.
 
 ## License
 
-MIT (unless otherwise specified per-repo)
+MIT unless otherwise specified.
