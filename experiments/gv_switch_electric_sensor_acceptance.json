@@ -1,0 +1,27 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "prototype": "E1",
+  "name": "fast_electrical_transient_sensor",
+  "status": "PRE_BUILD",
+  "requirements": {
+    "target_timing_sigma_ns": 1.0,
+    "preferred_timing_sigma_ns": 0.5,
+    "sham_fpr_max": 0.01,
+    "minimum_trials_per_configuration": 100,
+    "preferred_trials_per_configuration": 500
+  },
+  "required_checks": [
+    "waveform_repeatability",
+    "timing_jitter_measured",
+    "cable_delay_separable",
+    "scope_channel_skew_separable",
+    "shielding_response_characterized",
+    "orientation_response_characterized",
+    "sham_false_positive_rate_measured",
+    "no_saturation_in_operating_range"
+  ],
+  "positive_control_expected": "KNOWN EM CHANNEL",
+  "negative_control_forbidden": "UNEXPLAINED PROPAGATION CANDIDATE",
+  "warning": "E1 is an electrical transient sensor, not a GV detector."
+}

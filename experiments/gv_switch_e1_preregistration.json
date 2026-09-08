@@ -1,0 +1,118 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "prototype": "E1",
+  "document": "confirmatory_preregistration_lockfile",
+  "status": "LOCKED_PRE_HARDWARE",
+  "design": {
+    "randomization_seed": 42002,
+    "blocked_design": true,
+    "repeat_blocks": 2,
+    "configurations_per_block": 144,
+    "trials_per_block": 288,
+    "total_trials": 576,
+    "active_trials": 288,
+    "sham_trials": 288,
+    "distances_m": [
+      0.25,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "orientations_deg": [
+      0,
+      90,
+      180
+    ],
+    "shielding_states": [
+      "unshielded",
+      "partial",
+      "strong"
+    ],
+    "cables": [
+      "CABLE_A",
+      "CABLE_B"
+    ],
+    "scope_channels": [
+      "CH1",
+      "CH2"
+    ]
+  },
+  "timing_acceptance": {
+    "target_sigma_ns": 1.0,
+    "preferred_sigma_ns": 0.5
+  },
+  "sham_acceptance": {
+    "maximum_false_positive_rate": 0.01
+  },
+  "threshold_policy": {
+    "method": "fixed_threshold_from_calibration",
+    "adaptive_per_trial_thresholds_allowed": false,
+    "post_hoc_threshold_tuning_allowed": false
+  },
+  "required_controls": [
+    "direct_injection",
+    "cable_swap",
+    "scope_channel_swap",
+    "shielding_change",
+    "orientation_change",
+    "active_sham",
+    "source_disconnected"
+  ],
+  "required_e1_checks": [
+    "waveform_repeatability",
+    "timing_jitter_measured",
+    "cable_delay_separable",
+    "scope_channel_skew_separable",
+    "shielding_response_characterized",
+    "orientation_response_characterized",
+    "sham_false_positive_rate_measured",
+    "no_saturation_in_operating_range"
+  ],
+  "exclusion_rules": [
+    "missing_trigger_reference",
+    "missing_required_metadata",
+    "known_scope_saturation",
+    "documented acquisition_failure",
+    "manifest_configuration_mismatch",
+    "corrupted_raw_waveform"
+  ],
+  "forbidden_exclusions": [
+    "unexpected_result",
+    "unusual_waveform",
+    "result_disagrees_with_hypothesis",
+    "result_looks_like_noise_without_preregistered_failure"
+  ],
+  "allowed_final_verdicts": [
+    "E1 CALIBRATION PASS",
+    "E1 CALIBRATION FAIL",
+    "E1 CALIBRATION INCOMPLETE"
+  ],
+  "phase0_scientific_language": {
+    "allowed": [
+      "known electrical or electromagnetic response detected",
+      "no response detected within apparatus sensitivity",
+      "calibration incomplete",
+      "known-channel control successfully classified"
+    ],
+    "forbidden": [
+      "GV detected",
+      "God Variable confirmed",
+      "new force discovered",
+      "new field discovered"
+    ]
+  },
+  "raw_data_policy": {
+    "retain_raw_waveforms": true,
+    "retain_trial_manifest": true,
+    "retain_manifest_sha256": true,
+    "retain_analysis_output": true,
+    "retain_software_commit_sha": true
+  },
+  "change_policy": {
+    "changes_after_first_hardware_trial_require_new_version": true,
+    "changes_require_reason_documentation": true,
+    "silent_changes_allowed": false
+  },
+  "warning": "This preregistration governs E1 engineering calibration only. Passing E1 does not provide evidence that GV exists."
+}

@@ -205,3 +205,20 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# GV Switch Phase 0 runtime state
+experiments/gv_switch_phase0_results.json
+experiments/gv_switch_phase0_audit.json
+
+# GV Switch E1 runtime calibration data
+experiments/gv_switch_e1_trials.csv
+experiments/gv_switch_e1_demo.csv
+experiments/gv_switch_e1_calibration_report.json
+
+# GV Switch E1 generated hardware trial manifests
+experiments/gv_switch_e1_trial_manifest.csv
+experiments/gv_switch_e1_trial_manifest_metadata.json
+
+# GV Switch E1 blocked runtime manifests
+experiments/gv_switch_e1_blocked_manifest.csv
+experiments/gv_switch_e1_blocked_manifest_metadata.json

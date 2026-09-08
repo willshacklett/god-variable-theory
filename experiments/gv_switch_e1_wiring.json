@@ -1,0 +1,63 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "prototype": "E1-A",
+  "status": "PRE_ASSEMBLY",
+  "safety": {
+    "low_voltage_only": true,
+    "high_voltage_required": false,
+    "mains_switching_required": false
+  },
+  "sensor": {
+    "type": "passive_electric_transient_pickup",
+    "initial_geometry": "flat_copper_plate",
+    "initial_width_cm": 5.0,
+    "initial_height_cm": 5.0,
+    "active_area_cm2": 25.0,
+    "active_amplifier": false
+  },
+  "signal_path": {
+    "preferred_impedance_ohm": 50,
+    "preferred_connector": "BNC",
+    "preferred_cable": "50_ohm_coax"
+  },
+  "initial_scope_channels": {
+    "CH1": "TRIGGER_REFERENCE",
+    "CH2": "E1_SENSOR"
+  },
+  "expanded_scope_channels": {
+    "CH1": "TRIGGER_REFERENCE",
+    "CH2": "E1_SENSOR",
+    "CH3": "DIRECT_INJECTION_REFERENCE",
+    "CH4": "SECONDARY_EM_MONITOR"
+  },
+  "initial_distance_m": 0.25,
+  "test_distances_m": [
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "orientations_deg": [
+    0,
+    90,
+    180
+  ],
+  "shielding_states": [
+    "unshielded",
+    "partial",
+    "strong"
+  ],
+  "required_calibrations": [
+    "trigger_repeatability",
+    "direct_injection",
+    "cable_delay",
+    "channel_skew",
+    "noise_floor",
+    "sham_response",
+    "shielding_response",
+    "orientation_response"
+  ],
+  "freeze_rule": "Any material hardware change after E1-A calibration requires a new apparatus_config_id.",
+  "warning": "E1-A measures ordinary electrical transient coupling. It is not a GV detector."
+}
