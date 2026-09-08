@@ -1,0 +1,60 @@
+{
+  "protocol": "GV-SWITCH",
+  "phase": 0,
+  "status": "pre-hardware",
+  "purpose": "Known-channel validation before anomalous-signal search",
+  "timing": {
+    "target_sigma_ns": 1.0,
+    "preferred_sigma_ns": 0.5
+  },
+  "required_tests": [
+    {
+      "id": "A",
+      "name": "trigger_repeatability",
+      "required": true
+    },
+    {
+      "id": "B",
+      "name": "cable_delay",
+      "required": true
+    },
+    {
+      "id": "C",
+      "name": "electromagnetic",
+      "required": true
+    },
+    {
+      "id": "D",
+      "name": "acoustic",
+      "required": true
+    },
+    {
+      "id": "E",
+      "name": "mechanical",
+      "required": true
+    },
+    {
+      "id": "F",
+      "name": "clock_timing",
+      "required": true
+    },
+    {
+      "id": "G",
+      "name": "thermal",
+      "required": true
+    }
+  ],
+  "pass_rule": {
+    "required_passes": 7,
+    "total_required": 7,
+    "known_mechanism_may_be_unexplained_candidate": false
+  },
+  "phase1_entry": {
+    "hardware_documented": true,
+    "timing_uncertainty_measured": true,
+    "analysis_frozen": true,
+    "calibration_archived": true,
+    "sham_characterized": true
+  },
+  "warning": "Phase 0 validates the apparatus. It does not test whether GV exists."
+}
