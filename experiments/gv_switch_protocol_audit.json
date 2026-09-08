@@ -1,0 +1,139 @@
+{
+  "protocol_version": "GV-SWITCH-PRE-REG-0.1",
+  "generated_unix_time": 1788884057.9785979,
+  "warning": "Synthetic methodology only. This file is not evidence for GV.",
+  "results": [
+    {
+      "model": "clock",
+      "seed": 101,
+      "final_verdict": "KNOWN CLOCK/TIMING CHANNEL",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK ARTIFACT",
+          "passed": false,
+          "interpretation": "Fail means clock/timing behavior explains or disrupts the signal."
+        }
+      ]
+    },
+    {
+      "model": "em",
+      "seed": 102,
+      "final_verdict": "KNOWN EM CHANNEL",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK-CROSSCHECK SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic timing law remains spatial across clock reassignment."
+        },
+        {
+          "gate": "EM ISOLATION",
+          "verdict": "EM CHANNEL LIKELY",
+          "passed": false,
+          "interpretation": "Fail means the modeled EM channel explains the response."
+        }
+      ]
+    },
+    {
+      "model": "mechanical",
+      "seed": 103,
+      "final_verdict": "KNOWN ENVIRONMENTAL CHANNEL",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK-CROSSCHECK SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic timing law remains spatial across clock reassignment."
+        },
+        {
+          "gate": "EM ISOLATION",
+          "verdict": "EM-ISOLATION SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic candidate does not track the modeled EM manipulations."
+        },
+        {
+          "gate": "ENVIRONMENT ISOLATION",
+          "verdict": "MECHANICAL CHANNEL LIKELY",
+          "passed": false,
+          "interpretation": "Fail means a modeled environmental channel explains the response."
+        }
+      ]
+    },
+    {
+      "model": "acoustic",
+      "seed": 104,
+      "final_verdict": "KNOWN ENVIRONMENTAL CHANNEL",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK-CROSSCHECK SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic timing law remains spatial across clock reassignment."
+        },
+        {
+          "gate": "EM ISOLATION",
+          "verdict": "EM-ISOLATION SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic candidate does not track the modeled EM manipulations."
+        },
+        {
+          "gate": "ENVIRONMENT ISOLATION",
+          "verdict": "ACOUSTIC CHANNEL LIKELY",
+          "passed": false,
+          "interpretation": "Fail means a modeled environmental channel explains the response."
+        }
+      ]
+    },
+    {
+      "model": "thermal",
+      "seed": 105,
+      "final_verdict": "KNOWN ENVIRONMENTAL CHANNEL",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK-CROSSCHECK SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic timing law remains spatial across clock reassignment."
+        },
+        {
+          "gate": "EM ISOLATION",
+          "verdict": "EM-ISOLATION SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic candidate does not track the modeled EM manipulations."
+        },
+        {
+          "gate": "ENVIRONMENT ISOLATION",
+          "verdict": "THERMAL CHANNEL LIKELY",
+          "passed": false,
+          "interpretation": "Fail means a modeled environmental channel explains the response."
+        }
+      ]
+    },
+    {
+      "model": "gv",
+      "seed": 106,
+      "final_verdict": "UNEXPLAINED PROPAGATION CANDIDATE",
+      "gates": [
+        {
+          "gate": "CLOCK CROSSCHECK",
+          "verdict": "CLOCK-CROSSCHECK SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic timing law remains spatial across clock reassignment."
+        },
+        {
+          "gate": "EM ISOLATION",
+          "verdict": "EM-ISOLATION SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic candidate does not track the modeled EM manipulations."
+        },
+        {
+          "gate": "ENVIRONMENT ISOLATION",
+          "verdict": "ENVIRONMENT-ISOLATION SURVIVING CANDIDATE",
+          "passed": true,
+          "interpretation": "Pass means the synthetic candidate does not track the modeled mechanical, acoustic, or thermal controls."
+        }
+      ]
+    }
+  ]
+}
