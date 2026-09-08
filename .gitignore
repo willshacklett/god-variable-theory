@@ -218,3 +218,7 @@ experiments/gv_switch_e1_calibration_report.json
 # GV Switch E1 generated hardware trial manifests
 experiments/gv_switch_e1_trial_manifest.csv
 experiments/gv_switch_e1_trial_manifest_metadata.json
+
+# GV Switch E1 blocked runtime manifests
+experiments/gv_switch_e1_blocked_manifest.csv
+experiments/gv_switch_e1_blocked_manifest_metadata.json
