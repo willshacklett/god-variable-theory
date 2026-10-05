@@ -43,6 +43,12 @@ implementation; they must be read with detection fractions. Paired delta uses th
 best available baseline on each paired trajectory, not subtraction of population
 medians. Undefined values are not zero or positive evidence.
 
+The paired medians at 0% and 1% noise use only 5 and 1 complete pairs respectively,
+not all 60 events. At 5% and 10% no complete pair exists. This missing-alarm
+selection prevents treating those conditional summaries as population effects.
+No confidence interval, p-value or independent held-out false-positive estimate
+is supplied by this run. The four noise levels reuse the same simulated flows.
+
 The script reports palinstrophy as the largest conditional median at 1%, 5%, and
 10% noise (1.450000, 1.410000, 1.435000), but it detects only 3/60, 1/60, and
 4/60 events respectively. At zero noise its empirical FPR is 0, not 5%.

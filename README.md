@@ -113,6 +113,8 @@ Negative scientific outcomes are successful reproductions, not execution errors.
 
 `make reproduce-legacy` runs the historical cosmology/entropy toy separately.
 Its assumed damping and target fitting do not validate its old physics claims.
+The current toy fails to reproduce the claimed cosmological agreement (relative
+error 1.00) and prints a negative entropy proxy; see [failures](docs/NEGATIVE_RESULTS.md).
 Unseeded historical tether prototypes and superseded switch methods are not
 advertised as exact reproductions. External-service LLM scripts are not part of
 offline research reproduction.

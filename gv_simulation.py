@@ -119,6 +119,7 @@ class GodVariable:
         ax2.grid(True)
         ax2.legend()
         
+        fig.suptitle("Historical assumption-driven toy; not physical evidence")
         plt.tight_layout()
         plt.savefig(save_path)
         print(f"Replication simulation plot saved: {save_path}")
@@ -132,6 +133,7 @@ class GodVariable:
 
     def plot_evolution(self, save_path="rho_bh_entropy.png"):
         plt.figure(figsize=(12, 10))
+        plt.suptitle("Historical assumption-driven toy; not physical evidence")
         plt.subplot(2,1,1)
         plt.plot(self.scale_factors, self.rho_profile, label=r"$\rho_{\text{total}}(a)$", color="purple")
         plt.plot(self.scale_factors, self.curvature_proxy / np.max(self.curvature_proxy), label="Curvature Proxy (norm)", color="darkgreen", alpha=0.7)

@@ -1,7 +1,7 @@
 import numpy as np
 
 class GodVariable:
-    """Core implementation of the God Variable (Gv) scalar."""
+    """Historical unverified scalar toy, not a validated physical model."""
 
     def __init__(self, alpha=1.23e-120):
         """Initialize with the necessary/initiating constant alpha."""
@@ -20,7 +20,7 @@ class GodVariable:
         return self.gv_value
 
     def check_cosmo_consistency(self):
-        """Placeholder: compare derived Lambda to observed value."""
+        """Historical placeholder; tolerance accepts zero Lambda, not validation."""
         # Rough conversion factor (Planck units → m^{-2})
         derived_lambda = self.gv_value / (2.43e61)**4
         observed = 1.1056e-52

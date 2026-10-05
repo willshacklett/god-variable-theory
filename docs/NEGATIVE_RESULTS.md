@@ -7,13 +7,18 @@ also detect. No post-hoc pattern overrides a frozen success criterion.
 ## F0: ODE Blow-Up - NOT SUPPORTIVE
 
 - Tested: frozen GV metric on $dx/dt=x^2$, calibrated to 5% trajectory FPR.
-- Would support: greater median paired warning lead than every conventional
+- Would support: greater median warning lead than every conventional
   baseline, including the declared noisy regime.
-- Happened: GV detects events, but lead advantage is zero at 0%, 1%, 5% noise
+- Happened: GV detects events, but the difference of detector medians (not a
+  median paired difference) is zero at 0%, 1%, 5% noise
   and -0.001370 at 10%; $|d^2x/dt^2|$ is as good or better.
 - Counts against: the specific additional-warning claim, not a universal theorem
   about every conceivable statistic.
 - Learned: an ordinary monotone precursor ($2x^3$) already captures this toy instability.
+
+The protocol names a trajectory-wise primary comparison; the script/report instead
+summarize differences of population medians. This implementation gap is retained,
+not repaired by changing frozen code or claiming a paired analysis was done.
 
 [Original result](../experiments/GV_FLUID_F0_RESULTS.md).
 
@@ -93,6 +98,12 @@ The cosmology/entropy and tether toys lack a locked independent empirical test.
 Fitting a known target or imposing damping does not establish constant derivation,
 new energy, entropy-law evasion, or eternal behavior. These illustrations are
 INVALID / INCONCLUSIVE as evidence, not rebranded positive experiments.
+
+The current cosmology toy does not even reproduce the historical precision claim:
+it prints $\Lambda\approx5.844\times10^{-237}$ against a target
+$1.1056\times10^{-52}$, relative error 1.00, and entropy proxy
+$-1.292\times10^{27}$. These are failed/unphysical toy outputs, not cosmological
+agreement or Bekenstein-Hawking entropy. The old draft is preserved, not validated.
 
 New proposals may be tested, but each failed formulation stays failed. See the
 [ledger](EVIDENCE.md) and [anti-goalpost rules](FALSIFICATION.md).
