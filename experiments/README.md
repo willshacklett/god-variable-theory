@@ -1,5 +1,13 @@
 # GV Switch Experiments
 
+> Public research inventory: [evidence](../docs/EVIDENCE.md),
+> [negative results](../docs/NEGATIVE_RESULTS.md), and
+> [roadmap](../docs/EXPERIMENT_ROADMAP.md). This directory also contains fluid
+> benchmarks. F0/F1/F1b/F2b are NOT SUPPORTIVE; F2 is INVALID / INCONCLUSIVE.
+> Switch simulations are methodology only. Hardware specifications and manifests
+> do not establish completed physical runs; no equipment purchase is required
+> to reproduce the computational record. THE GOD VARIABLE HAS NOT BEEN CONFIRMED.
+
 ## Goal
 
 Convert the GV Switch Hypothesis into falsifiable timing tests.

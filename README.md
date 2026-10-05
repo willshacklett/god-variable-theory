@@ -1,346 +1,169 @@
-# God Variable (GV)
+# The God Variable
 
-**God Variable (GV)** is an experimental research program exploring whether a common constraint-based framework can describe survivability, degradation, and state transitions across engineered and physical systems.
+The God Variable is an open research program investigating whether certain state transitions contain reproducible signatures that remain unexplained after known causal pathways and simpler models are excluded.
 
-The project currently has two distinct tracks:
+## Status
 
-1. **Operational GV** — measurable constraint strain, drift, recoverability, CI scoring, and runtime monitoring.
-2. **Theoretical GV** — speculative work asking whether a deeper constraint or activation principle could have physical meaning.
+**THE GOD VARIABLE HAS NOT BEEN CONFIRMED.**
 
-The operational work is software and engineering.
+Several tested formulations have produced negative results. Some experimental
+programs remain open. No tracked physical experiment establishes a GV candidate.
 
-The theoretical work is a hypothesis.
+This is an independent open research project. GV is hypothetical. Computational
+anomalies are not proof of new physics; unexplained residuals require additional
+controls, and extraordinary interpretations require independent replication.
 
-They should not be treated as equivalent evidence.
+> A residual is only a residual until known explanations are excluded.
 
----
+**UNEXPLAINED ≠ GV; GV ≠ NEW PHYSICS; NEW PHYSICS ≠ GOD.**
+
+## Two Research Programs
 
-## Current Research Focus — The GV Switch
+**GV Switch:** can a state transition contain a reproducible signature that
+survives known timing, electromagnetic, mechanical, acoustic, thermal, software,
+statistical, and environmental explanations? The strongest switch verdict is an
+**unexplained propagation candidate**, not GV confirmation.
+
+**Local Tuning / A:** can we identify a reproducible transition signature between
+a pre-state and an aligned state A that ordinary dynamics or control behavior
+cannot explain? Preserve **GV -> transition / tuning process -> A** as a
+hypothesis: A is the resulting state, not GV. A conductor analogy is explanatory
+only, never evidence.
 
-The newest theoretical program is the **GV Switch Hypothesis**.
+The computational benchmark/falsification track tests predictive formulations,
+not theology. [Roadmap](docs/EXPERIMENT_ROADMAP.md).
 
-The core question is deliberately narrow:
+## What Would Count as Evidence?
 
-> Could a reproducibly triggered physical event produce a measurable response that survives known electromagnetic, timing, cable, acoustic, mechanical, thermal, and instrumental explanations?
+A candidate must meet prospectively fixed, measurable criteria: temporal
+localization, cross-sensor coherence, reproducibility, intervention dependence,
+survival of known-cause controls, held-out discrimination, and performance against
+simpler baselines. A residual alone is insufficient. Thresholds must be frozen
+before confirmatory data, not chosen after seeing an anomaly.
 
-The conceptual analogy is a switch:
+See the [canonical definition](docs/THEORY.md), [claims ladder](docs/CLAIMS.md),
+and [competing explanations](docs/ALTERNATIVE_EXPLANATIONS.md).
+
+## What Has Failed?
 
-\[
-\text{latent possibility}
-\rightarrow
-\text{activation}
-\rightarrow
-\text{lawful physical evolution}
-\]
+| Benchmark / method | Outcome |
+| --- | --- |
+| F0: ODE blow-up | **NOT SUPPORTIVE**: second derivative ties or beats GV. |
+| F1: inviscid Burgers | **NOT SUPPORTIVE**: all warning medians tie; initial-distribution confound disclosed. |
+| F1b: forced viscous Burgers | **NOT SUPPORTIVE**: total variation/gradient energy beat GV in the valid corrective test. |
+| F2: Navier-Stokes | **INVALID / INCONCLUSIVE**: insufficient active event incidence; not a valid detector-performance test. |
+| F2b: corrective Navier-Stokes | **NOT SUPPORTIVE**: new unchanged-code run passes implemented validity gates, but simpler vorticity/strain baselines are stronger. |
+| Early switch classifiers | **NOT SUPPORTIVE** under adversarial controls: clock/cable artifacts and a zero-power correction exposed failures. |
 
-This does **not** assume that a literal switch exists in nature.
+[What was tested, what would support it, and what happened](docs/NEGATIVE_RESULTS.md).
+Original results, confounds, and preregistrations remain accessible; thresholds and
+weights are not retroactively changed.
 
-It provides a falsifiable experimental framing for asking whether any reproducible physical residual exists after conventional mechanisms are excluded.
+## Current Experiments
 
-See:
+Switch clock/EM/environment gate successes are **synthetic methodology only**.
+Their modeled injected candidate is not an observed physical signal. The existing
+three CI edge-case tests are engineering software checks, not physical GV evidence.
 
-**theory/gv_switch_hypothesis.md**
+Phase 0 and E1 have specifications, acceptance logic and trial-manifest software;
+no tracked completed physical validation or waveform dataset is established.
+E1 is an ordinary electrical transient sensor, not a GV detector.
 
----
+`EM-001`, `EM-002`, and `TUNING-HW-001` are **PENDING provenance**: original
+records were not located in this repository. No completion or apparatus readiness
+is invented for them. Owner verification is needed. Hardware purchases are not
+required for this launch. [Audit](docs/AUDIT.md).
 
-## Scientific Status
+## Reproduce the Work
 
-### What has been done
+### Computational Reproduction
 
-The repository now contains:
+Supported/tested baseline: **Python 3.11** on Linux (verified with 3.11.16).
+Other Python/platform versions are not certified. No API keys or hardware are
+needed. From the repository root:
 
-- GV Switch hypothesis
-- propagation timing simulations
-- Monte Carlo calibration
-- adversarial-null testing
-- documented failed classifiers
-- independent clock-artifact crosscheck
-- electromagnetic isolation framework
-- environmental isolation framework
-- master synthetic protocol
-- experimental preregistration
-- benchtop roadmap
-- Phase 0 hardware specification
-- detector modality framework
-- E1 electrical transient sensor specification
-- randomized and blocked trial designs
-- E1 calibration software
-- E1 confirmatory preregistration
-- E1 bench assembly specification
-- E1 procurement plan
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-research-lock.txt
+python -m pip check
+make test
+make reproduce-smoke
+make reproduce-benchmarks
+```
 
-### What has NOT been done
+The [locked environment](requirements-research-lock.txt) records the verified
+direct and transitive versions. [requirements-dev.txt](requirements-dev.txt)
+offers bounded dependencies for development; changed versions require rerunning
+checks. If `make` is unavailable, use `python -m pytest -q` and
+`python scripts/reproduce_research.py --smoke` / `--benchmarks` directly.
 
-No physical experiment has produced evidence for GV.
-
-No unexplained propagation signal has been observed.
-
-No new particle, field, force, or physical constant has been detected.
-
-Synthetic tests validate only whether the experimental logic behaves correctly against the models encoded in the simulations.
-
----
-
-## Experimental Standard
-
-The strongest result currently permitted by the GV Switch protocol is:
-
-`UNEXPLAINED PROPAGATION CANDIDATE`
-
-That would mean only:
-
-> A reproducible signal survived the conventional mechanisms actually tested and requires independent replication.
-
-It would **not** mean:
-
-> GV detected.
-
-Unknown conventional mechanisms could still remain.
-
----
-
-# Phase 0 — Learn How the Apparatus Can Fool Us
-
-Before any unexplained-signal search, the apparatus must correctly identify known mechanisms.
-
-Required Phase 0 controls include:
-
-- trigger timing
-- cable delay
-- clock/channel bias
-- electromagnetic coupling
-- acoustic propagation
-- mechanical vibration
-- thermal drift
-- active/sham trials
-
-The current Phase 0 acceptance target is:
-
-\[
-7/7
-\]
-
-known-channel validation tests passed before Phase 1 is allowed.
-
-See:
-
-**experiments/GV_SWITCH_PHASE0_HARDWARE_SPEC.md**
-
----
-
-# Prototype E1-A
-
-The first physical prototype is intentionally ordinary.
-
-**E1-A** is a passive electrical transient sensor designed to characterize electromagnetic pickup from the trigger apparatus.
-
-It is **not** a GV detector.
-
-Initial architecture:
-
-- passive 5 cm × 5 cm copper pickup plate
-- 50-ohm coaxial signal path
-- CH1 trigger reference
-- CH2 E1 sensor
-- initial source distance of 0.25 m
-- low-voltage, low-energy trigger
-- no amplifier
-
-E1-A must characterize:
-
-- timing jitter
-- cable delay
-- oscilloscope channel skew
-- shielding response
-- orientation response
-- noise floor
-- sham false-positive rate
-- saturation behavior
-
-before it can be used as a trusted control instrument.
-
-See:
-
-**experiments/GV_SWITCH_ELECTRIC_SENSOR_SPEC.md**
-
-**experiments/GV_SWITCH_E1_BENCH_ASSEMBLY.md**
-
-**experiments/GV_SWITCH_E1_PREREGISTRATION.md**
-
----
-
-# Why the Failed Tests Matter
-
-Early synthetic classifiers initially appeared highly successful against simple null models.
-
-Harder adversarial tests broke them.
-
-Cable artifacts and clock bias could imitate apparent propagation.
-
-A free linear timing model also demonstrated a fundamental problem:
-
-\[
-t=t_0+\beta d
-\]
-
-from an instrumental bias can resemble:
-
-\[
-t=t_0+\frac{d}{v}
-\]
-
-from physical propagation.
-
-That failure changed the protocol.
-
-The current design therefore uses independent physical interventions rather than relying on timing fits alone.
-
-See:
-
-**experiments/GV_SWITCH_FAILURE_NOTES.md**
-
-Negative results and failed methods are retained as part of the scientific record.
-
----
-
-# Operational GV
-
-The operational side of GV predates the GV Switch work and addresses a different problem:
-
-> Can cumulative constraint strain, degradation, and loss of recoverability be measured before conventional pass/fail systems notice failure?
-
-Start here:
-
-### GV Drift Demo
-
-https://github.com/willshacklett/gv-drift-demo
-
-Minimal demonstration of early drift detection.
-
-### GodScore CI
-
-https://github.com/willshacklett/godscore-ci
-
-Survivability-aware CI scoring and optional enforcement.
-
-### GvAI Safety Systems
-
-https://github.com/willshacklett/gvai-safety-systems
-
-Runtime monitoring for AI and agent systems.
-
----
-
-# Original GV Framework
-
-The broader GV framework proposes a scalar representation of total constraint structure.
-
-A core conceptual form preserved in the theory is:
-
-\[
-G_v =
-\int \rho_{\text{total}}(x,t)\,dV
-+
-\alpha
-\]
-
-where the interpretation of \(\alpha\) remains theoretical.
-
-See:
-
-**THEORY.md**
-
-The equation is a proposed framework, not an experimentally established law of physics.
-
----
-
-# Longer-Term Theoretical Program
-
-Possible theoretical directions include:
-
-### Constraint-flow dynamics
-
-\[
-\partial_t G_v =
--\nabla\cdot J_{GV}
-+
-S(G_v)
-\]
-
-### Cosmological embedding
-
-Potential relationships to:
-
-- FLRW evolution
-- effective energy density
-- structure growth
-- early-universe dynamics
-
-### Quantum-field interpretation
-
-Possible questions involving:
-
-- effective field theory
-- symmetry behavior
-- UV/IR relationships
-
-### Black-hole sector
-
-Possible questions involving:
-
-- horizon constraints
-- entropy
-- evaporation
-
-These remain speculative until they produce quantitative predictions distinguishable from established physics.
-
----
-
-# Repository Principle
-
-The project follows a simple hierarchy:
-
-\[
-\text{idea}
-\rightarrow
-\text{model}
-\rightarrow
-\text{adversarial test}
-\rightarrow
-\text{preregistration}
-\rightarrow
-\text{instrument calibration}
-\rightarrow
-\text{physical experiment}
-\rightarrow
-\text{replication}
-\]
-
-A later step does not become valid merely because an earlier one succeeded.
-
----
-
-# Current Milestone
-
-The current milestone is:
-
-> Build and calibrate E1-A against known electrical and instrumental effects.
-
-Not:
-
-> Detect GV.
-
-If E1-A reveals that an apparent fast signal is ordinary electromagnetic pickup, that is a successful Phase 0 result.
-
----
-
-## Coherence Eternal ⭐
-
-If a system must run longer than its designers,  
-it needs constraints that outlive intent.
-
----
-
-## License
-
-MIT unless otherwise specified.
+Tests cover the existing software behavior plus evidence/document integrity.
+The smoke runner checks six master switch scenario verdicts and generates seeded
+CI CSVs and two plots. The full benchmark runner executes frozen F0, F1, F1b, F2
+and F2b with original population sizes/seeds; it takes longer than the smoke run.
+Expected benchmark outcomes: **NOT SUPPORTIVE, NOT SUPPORTIVE, NOT SUPPORTIVE,
+BENCHMARK INVALID, success criterion not met (NOT SUPPORTIVE)**.
+
+Outputs go to ignored `artifacts/research/`: per-command stdout/stderr, generated
+audits/CSV/PNG files, and machine-readable run manifests recording code hashes,
+interpreter, dependency versions, return codes and verdict checks. Historical
+reports, longitudinal data and archived switch audit are not overwritten.
+Negative scientific outcomes are successful reproductions, not execution errors.
+
+`make reproduce-legacy` runs the historical cosmology/entropy toy separately.
+Its assumed damping and target fitting do not validate its old physics claims.
+Unseeded historical tether prototypes and superseded switch methods are not
+advertised as exact reproductions. External-service LLM scripts are not part of
+offline research reproduction.
+
+### Physical Replication
+
+Physical replication requires independent apparatus, calibration, validated
+controls, raw waveforms, frozen analysis and independent data. Software demos or
+generated trial manifests cannot substitute for measurements. No completed
+physical replication is claimed, and it is not a prerequisite for publishing the
+computational record.
+
+## Theory
+
+Start with [docs/THEORY.md](docs/THEORY.md). It defines $S(t)$, $X(t)$, $K(t)$,
+$R(t)=X(t)-K(t)$, $t^*$, candidate $G(t)$, and the distinct states $S_0$, $T$, A.
+
+[THEORY.md](THEORY.md), [PAPER.md](PAPER.md), and
+[entropy_damping.md](entropy_damping.md) retain historical, unverified proposals.
+Their unification, entropy cancellation, eternal replication and energy claims
+are not current findings. Toy plots and philosophical analogies are not evidence.
+Operational product repositories are outside this research launch; local
+`ecosystem/` clones are ignored and neither modified nor required.
+
+## Evidence Ledger
+
+[Readable evidence inventory](docs/EVIDENCE.md) and
+[machine-readable ledger](evidence/evidence_ledger.json): 19 scoped entries,
+including all current experiment entry points, negative reports and missing-record
+placeholders. SUPPORTIVE methodology entries do not mean physical GV is supportive.
+
+## Falsification
+
+[Rejecting a formulation](docs/FALSIFICATION.md): losing to simpler baselines,
+known-pathway attribution, failed controls/replication, leakage, confounding,
+out-of-sample collapse, or post-hoc-only success reject the relevant claim.
+Revised formulations cannot erase failed ones or change their original criteria.
+
+## Contributing
+
+Replication, criticism, competing explanations, statistical review, alternative
+baselines, and attempts to **disprove GV** are welcome.
+[Contribution standards](CONTRIBUTING.md).
+
+## Citation
+
+Use [CITATION.cff](CITATION.cff), or cite Will Shacklett, *The God Variable*,
+https://github.com/willshacklett/god-variable-theory, with the exact commit and
+access date. No DOI, affiliation, peer review or publication acceptance is claimed.
+
+[Proposed v0.1.0 release notes](docs/RELEASE_NOTES_v0.1.0.md): Public Research
+Baseline. No release or tag has been created by this preparation.
+
+License: [MIT](LICENSE).

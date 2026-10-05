@@ -1,5 +1,8 @@
 """
 gv_simulation.py
+HISTORICAL TOY ONLY: claims below are unverified. Damping is stipulated,
+Lambda is a fit target, and no energy source or eternal behavior is established.
+See docs/THEORY.md and docs/NEGATIVE_RESULTS.md for current research status.
 Updated: Added von Neumann probe replication simulation with entropy damping demo.
 - Standard physics: Entropy waste accumulates → replication slowdown/burnout.
 - Gv-enabled: Holographic repayment damps waste → eternal exponential replication.
@@ -166,6 +169,7 @@ def tune_alpha_for_lambda(target_lambda=1.1056e-52, scale_factor=1e61):
     return result.x, result.fun
 
 def main():
+    print("Historical assumption-driven toy; not physical evidence for GV.")
     observed_lambda = 1.1056e-52
 
     print("Tuning alpha with BH entropy layer...\n")
