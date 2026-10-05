@@ -1,5 +1,12 @@
 # GV Switch Hypothesis
 
+> Historical speculative interpretation, not a demonstrated field or origin
+> mechanism. The launch's [canonical definition](../docs/THEORY.md) governs claims.
+> In this document only, `A(t)` means an activation function, not the aligned
+> post-state A in Local Tuning. The canonical notation calls it `a_act(t)`.
+> Modeled propagation and a surviving residual do not identify GV, mass, or
+> new physics. No physical GV candidate has been established.
+
 ## Purpose
 
 The GV Switch Hypothesis asks whether physical existence can be modeled as a transition from a latent or pre-physical state into an active spacetime state governed by stable laws.

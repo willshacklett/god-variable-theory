@@ -444,6 +444,11 @@ where:
 
 This extension is speculative and is not yet a derived physical law.
 
+Launch notation clarification (not a protocol change): this activation $A(t)$ is
+not the aligned post-state A in Local Tuning. The
+[canonical notation](../docs/THEORY.md#existing-mathematics-and-its-limits)
+calls the activation function $a_{\mathrm{act}}(t)$.
+
 ---
 
 ## 17. Locked Scientific Language

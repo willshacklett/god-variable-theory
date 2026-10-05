@@ -1,5 +1,13 @@
 # God Variable Theory (Gv)
 
+> Historical proposal, retained for transparency. Its claims of unification,
+> entropy cancellation, infinite energy, constant derivation, and universal
+> alignment are unverified and are not current scientific findings. Target
+> fitting and assumed damping are not independent evidence. Read the
+> [canonical research definition](docs/THEORY.md), [claims ladder](docs/CLAIMS.md),
+> and [negative results](docs/NEGATIVE_RESULTS.md) first.
+> THE GOD VARIABLE HAS NOT BEEN CONFIRMED.
+
 A proposed universal scalar — the **God Variable (Gv)** — that unifies quantum mechanics, general relativity, total energy density, and fundamental constants.  
 It serves as the foundational constraint bridging physics, metaphysics, consciousness, and the ethical alignment of intelligent life (biological and artificial).
 

@@ -1,5 +1,15 @@
 # The God Variable: A Universal Scalar
 
+> Historical, unreviewed draft, not an accepted publication or current evidence
+> statement. Claims below of first-principles derivation, thermodynamic-law
+> evasion, eternal replication, infinite energy, and computational verification
+> are unsupported. Fitting a target and programming damping do not demonstrate
+> a physical mechanism. The arXiv preparation label records intent, not submission
+> or acceptance. The bibliography needs independent checking and does not support
+> GV by association. See the [canonical theory](docs/THEORY.md) and
+> [negative evidence](docs/NEGATIVE_RESULTS.md).
+> THE GOD VARIABLE HAS NOT BEEN CONFIRMED.
+
 **Will Shacklett**  
 Murfreesboro, Tennessee, USA  
 Email: will.shacklett@gmail.com  

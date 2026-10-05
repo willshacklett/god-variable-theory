@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "Please cite the repository and exact commit used. This is an unconfirmed open research program, not an established physical theory."
+title: "The God Variable"
+type: software
+authors:
+  - family-names: Shacklett
+    given-names: Will
+repository-code: "https://github.com/willshacklett/god-variable-theory"
+url: "https://github.com/willshacklett/god-variable-theory"
+license: MIT
