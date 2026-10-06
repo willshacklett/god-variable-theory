@@ -18,8 +18,8 @@ interpretation, limitations and reproduction command (or explicit absence).
 | PENDING | No completed result established; for the three requested IDs, original records/status await verification. |
 | HARDWARE READY / NOT RUN | Protocol/software documentation is available; physical completion, assembly and apparatus certification are not established. |
 
-Snapshot: **19 entries**: SUPPORTIVE **5**, MIXED **1**, NOT SUPPORTIVE **5**,
-INVALID / INCONCLUSIVE **3**, PENDING **3**, HARDWARE READY / NOT RUN **2**.
+Snapshot: **20 entries**: SUPPORTIVE **5**, MIXED **1**, NOT SUPPORTIVE **5**,
+INVALID / INCONCLUSIVE **3**, PENDING **4**, HARDWARE READY / NOT RUN **2**.
 **Zero entries establish support for physical GV.** Counts are inventory counts,
 not independent statistical studies; several switch checks share generators/data.
 
@@ -39,6 +39,13 @@ not independent statistical studies; several switch checks share generators/data
 | TOY-COSMOLOGY / TOY-TETHER | INVALID / INCONCLUSIVE | Target-fitting, stipulated damping and feedback illustrations are not independent tests. |
 | SWITCH-PHASE0 / SWITCH-E1 | HARDWARE READY / NOT RUN | Specifications/software, no tracked completed physical validation. |
 | EM-001 / EM-002 / TUNING-HW-001 | PENDING | No original records located; owner verification needed, no completed hardware claim. |
+| GV-PHY-001 | PENDING | [Prospective relay program](PHYSICAL_EXPERIMENT_PROGRAM.md), design/mock software only; no physical data, certified apparatus or completed control validation. |
+
+GV-PHY-001 is a new ID, not an alias for a provenance-missing experiment. Its raw
+dataset remains `none`; mock dry-run files stay ignored and are not registered as
+physical evidence. Its null physical reproduction command does not conceal a run:
+hardware acquisition is not implemented. Software-only instructions are in the
+[program](PHYSICAL_EXPERIMENT_PROGRAM.md#raw-data-and-software-dry-run).
 
 ## Provenance and Coverage
 

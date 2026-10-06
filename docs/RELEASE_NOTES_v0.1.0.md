@@ -25,9 +25,12 @@ remains disclosed. F2 is **INVALID / INCONCLUSIVE**, not a valid detector-perfor
 negative. Early switch identification methods failed against artifacts or lost
 all detection power. [Failures](NEGATIVE_RESULTS.md) are prominent, not omitted.
 
-The [ledger](../evidence/evidence_ledger.json) has 19 scoped entries: SUPPORTIVE 5
+At the PR #3 public research baseline, the [ledger](../evidence/evidence_ledger.json)
+had 19 scoped entries: SUPPORTIVE 5
 (software/methodology only), MIXED 1, NOT SUPPORTIVE 5, INVALID / INCONCLUSIVE 3,
 PENDING 3, HARDWARE READY / NOT RUN 2. None establishes physical GV support.
+These are historical baseline counts; see the [current inventory](EVIDENCE.md)
+for later prospective programs, including the unrun GV-PHY-001 design.
 
 ## Open Programs
 

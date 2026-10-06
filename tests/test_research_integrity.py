@@ -22,7 +22,7 @@ EXPECTED_IDS = {
     "SWITCH-FAILED-CLASSIFIERS", "SWITCH-CLOCK", "SWITCH-EM",
     "SWITCH-ENVIRONMENT", "SWITCH-MASTER", "SWITCH-PHASE0", "SWITCH-E1",
     "EM-001", "EM-002", "TUNING-HW-001", "TOY-COSMOLOGY", "TOY-TETHER",
-    "EDGECASE-CI",
+    "EDGECASE-CI", "GV-PHY-001",
 }
 DOC_FILES = sorted([
     *ROOT.glob("*.md"), *(ROOT / "docs").glob("*.md"),
@@ -104,7 +104,7 @@ def test_negative_and_unrun_results_cannot_be_promoted():
     for experiment_id in ["F0", "F1", "F1b", "F2b", "SWITCH-FAILED-CLASSIFIERS"]:
         assert by_id[experiment_id]["status"] == "NOT SUPPORTIVE"
     assert by_id["F2"]["status"] == "INVALID / INCONCLUSIVE"
-    for experiment_id in ["EM-001", "EM-002", "TUNING-HW-001"]:
+    for experiment_id in ["EM-001", "EM-002", "TUNING-HW-001", "GV-PHY-001"]:
         assert by_id[experiment_id]["status"] == "PENDING"
         assert by_id[experiment_id]["dataset"]["kind"] == "none"
     for experiment_id in ["SWITCH-PHASE0", "SWITCH-E1"]:

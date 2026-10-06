@@ -69,6 +69,17 @@ Phase 0 and E1 have specifications, acceptance logic and trial-manifest software
 no tracked completed physical validation or waveform dataset is established.
 E1 is an ordinary electrical transient sensor, not a GV detector.
 
+**GV-PHY-001** proposes a separate low-voltage relay/LED transition with synchronized
+electrical, magnetic, vibration, acoustic, optical, thermal and reference channels.
+It is **PENDING — DESIGN / NOT RUN**, not hardware-ready. Its
+[program](docs/PHYSICAL_EXPERIMENT_PROGRAM.md) and
+[prospective preregistration](experiments/GV_PHY_001_PREREGISTRATION.md) define
+known-cause controls, a held-out endpoint, meaningful bounded nulls and independent
+replication. Mock files are **SYNTHETIC PIPELINE TEST — NOT GV EVIDENCE**.
+Its endpoint/counts are provisional pending physical noise/reset characterization,
+timing/sensitivity certification and statistical approval. Software rejects analysis
+mutation/leakage but cannot certify a physical null or complete the physical endpoint.
+
 `EM-001`, `EM-002`, and `TUNING-HW-001` are **PENDING provenance**: original
 records were not located in this repository. No completion or apparatus readiness
 is invented for them. Owner verification is needed. Hardware purchases are not
@@ -127,6 +138,10 @@ generated trial manifests cannot substitute for measurements. No completed
 physical replication is claimed, and it is not a prerequisite for publishing the
 computational record.
 
+The [physical-program dry run](docs/PHYSICAL_EXPERIMENT_PROGRAM.md#raw-data-and-software-dry-run)
+needs no hardware: `python scripts/gv_phy_001.py dry-run --seed 42 --out artifacts/physical/dry-run-001`.
+It exercises 12 injected/null pipeline cases, not a completed physical experiment.
+
 ## Theory
 
 Start with [docs/THEORY.md](docs/THEORY.md). It defines $S(t)$, $X(t)$, $K(t)$,
@@ -142,7 +157,7 @@ Operational product repositories are outside this research launch; local
 ## Evidence Ledger
 
 [Readable evidence inventory](docs/EVIDENCE.md) and
-[machine-readable ledger](evidence/evidence_ledger.json): 19 scoped entries,
+[machine-readable ledger](evidence/evidence_ledger.json): 20 scoped entries,
 including all current experiment entry points, negative reports and missing-record
 placeholders. SUPPORTIVE methodology entries do not mean physical GV is supportive.
 
