@@ -16,6 +16,7 @@ not certified assembled equipment. Hardware purchase is not a launch prerequisit
 | E1 passive EM sensor specifications/manifests/calibration software | READY | Locked [576-trial design](../experiments/GV_SWITCH_E1_PREREGISTRATION.md); no physical acquisition established. |
 | GV-PHY-001 prospective relay design and mock pipeline | READY | [Program](PHYSICAL_EXPERIMENT_PROGRAM.md), [preregistration](../experiments/GV_PHY_001_PREREGISTRATION.md); documentation/software review only. Scientific status PENDING, DESIGN / NOT RUN. |
 | GV-PHY-001 hardware/calibration/locked sessions | FUTURE | No selected apparatus or driver. Demonstrate sensitivity, timing, controls and independent repeat before any physical candidate interpretation. |
+| GV-PHY-001 hardware design-review package | READY | [Requirements and explicit gaps](GV_PHY_001_CONSTRUCTION_READINESS.md); design artifacts and non-operational interface only. Status remains PENDING, not construction or execution readiness. |
 | EM-001 and EM-002 original records | FUTURE | Owner must supply protocols/results and actual status; pending provenance, not invented aliases or completed experiments. |
 | Independently calibrated physical switch test | FUTURE | Optional external collaboration; satisfy apparatus controls before any candidate search. |
 | Independent apparatus/laboratory replication | FUTURE | Needed before causal interpretation, even if a residual eventually survives. |

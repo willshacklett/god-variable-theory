@@ -14,6 +14,7 @@ from src.gv_physical_program import (
     SCENARIOS, WARNING, fit_model, inspect_run, load_raw, lock_threshold,
     manifest, mock_run, save_raw, summarize_results, validate_locked_analysis, write_json_new,
 )
+from src.gv_physical_acquisition import validate_configuration
 
 
 def calibration_records(stage, seed, scenarios):
@@ -88,6 +89,9 @@ def main():
     make_manifest.add_argument("--private-out", type=Path, required=True)
     validate = commands.add_parser("validate")
     validate.add_argument("raw_directory", type=Path)
+    hardware = commands.add_parser("validate-hardware")
+    hardware.add_argument("--configuration", type=Path, required=True)
+    hardware.add_argument("--calibration-registry", type=Path, required=True)
     score = commands.add_parser("score")
     for option in ("manifest", "model", "threshold", "lock", "raw-root", "out"):
         score.add_argument("--" + option, type=Path, required=True)
@@ -134,6 +138,11 @@ def main():
         private = json.loads(args.operator_key.read_text())
         write_json_new(args.out, summarize_results(analysis["results"], private))
         print("Unblinded mock summary; physical conclusion issuance is not implemented")
+    elif args.command == "validate-hardware":
+        configuration = json.loads(args.configuration.read_text())
+        registry = json.loads(args.calibration_registry.read_text())
+        validate_configuration(configuration, registry)
+        print("VALID design manifest/binding only; PENDING; no physical driver or certification")
     else:
         metadata, _ = load_raw(args.raw_directory)
         print(f"VALID schema/hash: {metadata['run_id']}; origin={metadata['origin']}; not a physical-control certification")

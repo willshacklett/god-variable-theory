@@ -46,6 +46,9 @@ dataset remains `none`; mock dry-run files stay ignored and are not registered a
 physical evidence. Its null physical reproduction command does not conceal a run:
 hardware acquisition is not implemented. Software-only instructions are in the
 [program](PHYSICAL_EXPERIMENT_PROGRAM.md#raw-data-and-software-dry-run).
+The [hardware-review artifacts](GV_PHY_001_CONSTRUCTION_READINESS.md) are plans,
+not measurements, construction approval or a status promotion. Hardware/registry
+validation and unit-test replay do not constitute physical evidence.
 
 ## Provenance and Coverage
 
