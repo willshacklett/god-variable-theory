@@ -76,6 +76,9 @@ It is **PENDING — DESIGN / NOT RUN**, not hardware-ready. Its
 [prospective preregistration](experiments/GV_PHY_001_PREREGISTRATION.md) define
 known-cause controls, a held-out endpoint, meaningful bounded nulls and independent
 replication. Mock files are **SYNTHETIC PIPELINE TEST — NOT GV EVIDENCE**.
+Its endpoint/counts are provisional pending physical noise/reset characterization,
+timing/sensitivity certification and statistical approval. Software rejects analysis
+mutation/leakage but cannot certify a physical null or complete the physical endpoint.
 
 `EM-001`, `EM-002`, and `TUNING-HW-001` are **PENDING provenance**: original
 records were not located in this repository. No completion or apparatus readiness

@@ -13,6 +13,9 @@ a fused/current-limited <=5 V isolated supply, <=100 mA; allow at least 5 s betw
 commands and monitor temperature. Keep duty cycle <=10% during engineering and
 reassess only through a prospective safety revision. Dry contacts switch a separate
 <=5 V, <=5 mA battery LED/resistor circuit. Measure contact voltage at high impedance.
+The intended hold is 0.300 s followed by coil-off reset. Five seconds is a minimum,
+not a demonstrated thermal/structural settling time; longer fixed gaps require a
+prospective qualification amendment before evaluation, not selective per-event waits.
 
 Route shielded/differential analog signals to one >=16-channel simultaneous-sampling
 DAQ at 20 ksample/s/channel. A multiplexed ADC is acceptable only if measured skew
@@ -37,7 +40,7 @@ sampling; USB/polling magnetometers alone cannot meet this architecture.
 
 | Channel / units | Purpose | Useful analog bandwidth | Scale / calibration / failure modes |
 | --- | --- | --- | --- |
-| trigger / V | Controller hardware marker | >=10 kHz, characterize sampled edge | 3.3 V nominal; level/edge/skew calibration; bounce, ground pickup, clipping. |
+| trigger / V | Controller hardware marker | DC-2 kHz minimum; characterize edge/filter delay | 3.3 V nominal; level/edge/skew calibration; bounce, ground pickup, clipping. |
 | current / A | Coil/load electrical pathway | DC-2 kHz | <=0.1 A intended; shunt/isolated current sensor gain and step response; common impedance, heating. |
 | voltage / V | Contact/load state and electrical transient | DC-2 kHz | <=5 V intended; differential/high-impedance isolated measurement; ground loops or probe loading. |
 | magnetic / uT | Receiver candidate magnetic response | DC-2 kHz | Signal/noise unknown until calibration; injected field/gain/axis/latency check; Hall offset, ambient mains, saturation. |
@@ -45,8 +48,8 @@ sampling; USB/polling magnetometers alone cannot meet this architecture.
 | acoustic / Pa | Receiver candidate pressure response | 20 Hz-2 kHz | No claimed scale; acoustic calibrator or traceable reference; AGC disabled, vibration crosstalk. |
 | temperature / degC | Coil/room thermal drift | DC-10 Hz sufficient | Ambient plus small coil rise, not a frozen measured effect; calibrated reference thermometer; response lag, self-heating. |
 | optical / V | Independent LED/contact post-state | DC-2 kHz | Bounded photodiode/TIA output inside ADC range; dark/on plateaus, comparator/edge latency, ambient light pickup. |
-| environment_reference / uT | External magnetic/RFI disturbance witness | DC-2 kHz | Unknown ambient scale; same field calibration as receiver; local gradients/shared supply confounds. |
-| timing_reference / V | Independent oscillator/timebase check | >=10 kHz | 3.3 V nominal 20 Hz pulse train, known uncertainty; verify pulse periods and pre/post offsets on an independent instrument. |
+| environment_reference / uT | External low-frequency magnetic witness, not an RF monitor | DC-2 kHz | Unknown ambient scale; same field calibration as receiver; local gradients/shared supply confounds. |
+| timing_reference / V | Independent oscillator/timebase check | DC-2 kHz minimum; characterize pulse/filter delay | 3.3 V nominal 20 Hz pulse train, known uncertainty; verify pulse periods and pre/post offsets on an independent instrument. |
 | em_reference / uT | Source-proximal magnetic witness | DC-2 kHz | Calibrate field/axis/latency; source field may saturate. Not the receiver candidate channel. |
 | mechanical_reference / m/s^2 | Source/fixture vibration witness | 10 Hz-2 kHz | Calibrated reference injection; floor/fixture paths and cable loading. |
 | acoustic_reference / Pa | Source-proximal pressure witness | 20 Hz-2 kHz | Calibrated pressure/latency; cross-talk/room echoes. |
@@ -55,12 +58,20 @@ A Hall sensor does not monitor every RF electric-field pathway. An RF/electric
 probe and broader-band scope are optional Tier 2 diagnostics; lack of coverage
 prevents a claim that all EM mechanisms were excluded. Temperature sampled by the
 DAQ can be oversampled; its bandwidth/lag must not be described as 50 us thermometry.
+RF/electric-field characterization and impedance-matched dummy receiver inputs
+are required qualification tests before any unexplained attribution, even though
+they are not added to the three searched channels. RF may rectify into low-frequency
+outputs. A 2 kHz Hall channel cannot certify its absence. Coil current-loop geometry,
+core magnetization and three-axis pickup must be characterized; one-axis witnesses
+are incomplete causal coverage. The temperature channel measures coil/body temperature;
+ambient temperature is separately logged in environmental metadata.
 
 ## Timing Budget and Calibration
 
 Target **<=100 us worst-case relative uncertainty**, not 1 ns. Prospective budget:
 50 us relative edge quantization (20 kHz), <=20 us residual channel skew,
-<=20 us uncertainty in corrected front-end group delay, <=10 us trigger/reference
+<=20 us pairwise corrected front-end delay uncertainty (<=10 us per sensor),
+<=10 us trigger/reference
 comparison and clock drift within the capture. Sum bounds conservatively; correlated
 errors cannot be combined as independent Gaussian uncertainties to shrink the budget.
 
@@ -71,8 +82,8 @@ characterize each sensor's analog latency with its appropriate physical injectio
 Use an independent scope/timebase to test command-marker latency/jitter, pulse periods,
 missing samples and pre/post drift. Software logs/USB arrival time are audit-only.
 
-Calibrated fast sensor latency can exceed 20 us; **uncertainty after correction**
-must meet 20 us. If this cannot be achieved with the selected sensor/DAQ, v1 is
+Calibrated fast sensor latency can exceed 10 us; **uncertainty after correction**
+must meet 10 us per channel. If this cannot be achieved with the selected sensor/DAQ, v1 is
 not valid: revise the design/version prospectively, not just relabel poor timing.
 The slow temperature channel instead permits characterized latency uncertainty
 <=0.5 s; it never participates in fast coincidence or propagation timing.
@@ -82,6 +93,21 @@ The toy pulse-period check catches gross errors only; a 20 Hz pulse sampled at
 Clock offsets can align unrelated impulses; event-loop jitter, hidden filters or
 a shared trigger leak can make a false synchronized residual. Cable/sensor swaps,
 independent reference tests and frozen latency corrections are required.
+
+This target is not certified by any proposed product or by the mock. Qualification
+requires documented simultaneous aperture/skew or a measured multiplexing scan
+table, no dropped samples, a stable clock independently checked across the 0.5 s
+record, external reference resolution substantially below 10 us, and gain/filter/
+temperature/amplitude-dependent transfer measurements for every fast sensor.
+The trigger/reference passband must roll off before the 10 kHz Nyquist frequency;
+the old >=10 kHz analog-bandwidth wording left no anti-alias transition band.
+Characterize rather than conceal that filter's delay. USB buffering and OS jitter
+must not alter sample ordering. A fixed scalar latency is inadequate for frequency-
+dependent phase/group-delay dispersion outside a calibrated pulse family. Such
+channels fail v1 qualification; do not "correct" them by aligning physical events.
+Microphones, accelerometers and digital magnetometers with undocumented smoothing/
+AGC can readily fail these requirements. Tier 1 is therefore not a timing-qualified
+apparatus, and Tier 2 feasibility/cost cannot be asserted until a capability review.
 
 ## Calibration and Run Acceptance
 

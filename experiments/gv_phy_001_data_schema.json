@@ -27,9 +27,9 @@
   },
   "calibration_required": ["units", "version", "gain", "offset", "range_min", "range_max", "latency_s", "latency_uncertainty_s", "kind"],
   "calibration_transform": "corrected_value = stored_value * gain + offset; stored arrays retain nominal engineering units and remain immutable",
-  "latency_limits": "Fast channels <=20 us uncertainty after correction; temperature <=0.5 s characterized uncertainty, never a fast coincidence channel",
+  "latency_limits": "Fast channels <=10 us uncertainty per channel after correction (<=20 us pairwise); temperature <=0.5 s characterized uncertainty, never a fast coincidence channel",
   "latency_correction": "Corrected feature time = sample time minus independently calibrated front-end latency_s relative to trigger. Fast offsets bounded +/-10 ms; trigger offset zero. No interpolation, waveform rewriting or subtraction of physical propagation delays. Temperature lag is metadata only.",
-  "validity": "Finite complete samples, no clipping, characterized channel latency, common-clock grid; invalid captures retained and reported, not silently dropped",
+  "validity": "Format/gross-timing checks only; physical assay certification is not implemented. Physical records are ineligible for a valid null until independent calibration/control certification. Invalid captures retained, never silently dropped.",
   "timestamp": "ISO-8601 UTC audit timestamp; never substitutes for recorded hardware trigger",
   "physical_authenticity": "A format validator cannot establish that a file is a real measurement; independent provenance/control review is mandatory"
 }

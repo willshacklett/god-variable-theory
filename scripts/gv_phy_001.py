@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.gv_physical_program import (
     SCENARIOS, WARNING, fit_model, inspect_run, load_raw, lock_threshold,
-    manifest, mock_run, save_raw, summarize_results, write_json_new,
+    manifest, mock_run, save_raw, summarize_results, validate_locked_analysis, write_json_new,
 )
 
 
@@ -20,7 +20,9 @@ def calibration_records(stage, seed, scenarios):
     for block in range(5):
         public, _ = manifest(stage, seed, block)
         for index, event in enumerate(public["assignments"]):
-            yield mock_run(event, scenarios[index % len(scenarios)], seed + block * 1000 + index)
+            identity = f"{stage}:{seed}:{block}:{event['run_id']}"
+            stream_seed = int.from_bytes(hashlib.sha256(identity.encode()).digest()[:16], "big")
+            yield mock_run(event, scenarios[index % len(scenarios)], stream_seed)
 
 
 def dry_run(directory: Path, seed: int) -> dict:
@@ -28,14 +30,18 @@ def dry_run(directory: Path, seed: int) -> dict:
     known = ["null", "electrical", "em", "vibration", "acoustic", "thermal", "environmental", "overlap"]
     model = fit_model(calibration_records("model_calibration", seed, known))
     threshold = lock_threshold(calibration_records("threshold_calibration", seed + 1, ["sham"]), model)
-    write_json_new(directory / "model.json", model)
-    write_json_new(directory / "threshold.json", threshold)
+    model_hash = write_json_new(directory / "model.json", model)
+    threshold_hash = write_json_new(directory / "threshold.json", threshold)
+    write_json_new(directory / "analysis_lock.json", {
+        "model_file_sha256": model_hash, "threshold_file_sha256": threshold_hash,
+        "source_sha256": hashlib.sha256((ROOT / "src/gv_physical_program.py").read_bytes()).hexdigest(),
+        "schema_sha256": hashlib.sha256((ROOT / "experiments/gv_phy_001_data_schema.json").read_bytes()).hexdigest(),
+    })
     public, private = manifest("engineering", seed + 2)
     public["assignments"] = public["assignments"][:len(SCENARIOS)]
     private["assignments"] = private["assignments"][:len(SCENARIOS)]
     digest = write_json_new(directory / "manifest.json", public)
-    write_json_new(directory / "operator_key.json", private)
-    (directory / "operator_key.json").chmod(0o600)
+    write_json_new(directory / "operator_key.json", private, private=True)
     expected = {
         "timing": "TIMING ARTIFACT", "electrical": "ELECTRICAL TRANSIENT",
         "em": "KNOWN EM", "vibration": "KNOWN MECHANICAL", "acoustic": "KNOWN ACOUSTIC",
@@ -83,7 +89,7 @@ def main():
     validate = commands.add_parser("validate")
     validate.add_argument("raw_directory", type=Path)
     score = commands.add_parser("score")
-    for option in ("manifest", "model", "threshold", "raw-root", "out"):
+    for option in ("manifest", "model", "threshold", "lock", "raw-root", "out"):
         score.add_argument("--" + option, type=Path, required=True)
     summary = commands.add_parser("summarize")
     for option in ("analysis", "operator-key", "out"):
@@ -99,14 +105,20 @@ def main():
         seed = secrets.randbits(128) if args.seed is None else args.seed
         public, private = manifest(args.stage, seed, args.block)
         digest = write_json_new(args.public_out, public)
-        write_json_new(args.private_out, private)
-        args.private_out.chmod(0o600)
+        write_json_new(args.private_out, private, private=True)
         print(f"Prospective manifest: {len(public['assignments'])} events; SHA256 {digest}")
         print("Keep operator key/seed separate from analysts. This is not an acquisition record.")
     elif args.command == "score":
         public = json.loads(args.manifest.read_text())
         model = json.loads(args.model.read_text())
         threshold = json.loads(args.threshold.read_text())
+        lock = json.loads(args.lock.read_text())
+        for key, path in [("model_file_sha256", args.model), ("threshold_file_sha256", args.threshold),
+                  ("source_sha256", ROOT / "src/gv_physical_program.py"),
+                  ("schema_sha256", ROOT / "experiments/gv_phy_001_data_schema.json")]:
+            if lock.get(key) != hashlib.sha256(path.read_bytes()).hexdigest():
+                                raise ValueError("Analysis inputs do not match the pre-evaluation lock")
+        validate_locked_analysis(model, threshold)
         digest = hashlib.sha256(args.manifest.read_bytes()).hexdigest()
         results = []
         for event in public["assignments"]:

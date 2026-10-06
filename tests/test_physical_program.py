@@ -9,7 +9,7 @@ import pytest
 from src.gv_physical_program import (
     CHANNELS, CLASSIFICATIONS, DATA_SCHEMA, TIMES, acquire_physical, analyze_run, calibration_metadata,
     check_timing, fit_model, load_raw, lock_threshold, manifest, mock_run,
-    peak, proportion_interval, save_raw, summarize_results, validate_dataset, write_json_new,
+    peak, proportion_interval, sample_fingerprint, save_raw, sealed, simple_scores, summarize_results, validate_dataset, write_json_new,
 )
 
 
@@ -113,6 +113,7 @@ def test_end_to_end_synthetic_only(tmp_path, monkeypatch):
     (directory / "operator_key.json").rename(hidden_key)
     arguments = ["gv_phy_001", "score", "--manifest", str(directory / "manifest.json"),
                  "--model", str(directory / "model.json"), "--threshold", str(directory / "threshold.json"),
+                 "--lock", str(directory / "analysis_lock.json"),
                  "--raw-root", str(directory / "raw"), "--out", str(directory / "blind.json")]
     monkeypatch.setattr(sys, "argv", arguments)
     main()
@@ -125,6 +126,13 @@ def test_end_to_end_synthetic_only(tmp_path, monkeypatch):
                         "--operator-key", str(hidden_key), "--out", str(directory / "unblind.json")])
     main()
     assert json.loads((directory / "unblind.json").read_text())["physical_evidence"] is False
+    threshold_path = directory / "threshold.json"
+    saved = json.loads(threshold_path.read_text())
+    saved["value"] += 1
+    threshold_path.write_text(json.dumps(sealed(saved)))
+    monkeypatch.setattr(sys, "argv", arguments[:-1] + [str(directory / "mutated.json")])
+    with pytest.raises(ValueError, match="lock"):
+        main()
 
 
 @pytest.fixture(scope="module")
@@ -196,11 +204,12 @@ def test_mock_endpoint_success_never_becomes_physical_evidence():
             results.append({"run_id": row["run_id"], "origin": "synthetic",
                             "valid": True, "residual_flag": hit})
     summary = summarize_results(results, private)
-    assert summary["frozen_endpoint_met"] is True
+    assert summary["screening_endpoint_met"] is True
+    assert summary["frozen_endpoint_met"] is False and summary["null_result_valid"] is False
     assert summary["physical_evidence"] is False and summary["status"] == "INVALID / INCONCLUSIVE"
     for row in private["assignments"]:
         if row["arm"] == "shielded": row["variant"] = "distance"
-    assert summarize_results(results, private)["frozen_endpoint_met"] is False
+    assert summarize_results(results, private)["screening_endpoint_met"] is False
     with pytest.raises(ValueError): summarize_results(results[:-1], private)
     for result in results: result["origin"] = "physical"
     with pytest.raises(NotImplementedError): summarize_results(results, private)
@@ -221,9 +230,13 @@ def test_physical_tag_cannot_promote_single_trace(locked_mock):
     for calibration in metadata["calibrations"].values():
         calibration.update(kind="physical", version="TEST-VERSION")
     model["origin"] = threshold["origin"] = "physical"
+    model = sealed(model)
+    threshold["model_sha256"] = model["sha256"]
+    threshold = sealed(threshold)
     result = analyze_run(metadata, samples, model, threshold)
     assert result["classification"] == "UNATTRIBUTED RESIDUAL - REQUIRES CONTROLS"
     assert result["physical_evidence"] is False
+    assert result["valid"] is False and result["physical_assay_certified"] is False
 
 
 def test_latency_correction_changes_feature_time_not_raw_samples():
@@ -232,3 +245,157 @@ def test_latency_correction_changes_feature_time_not_raw_samples():
     _, _, corrected_time = peak(values, 0.005)
     assert corrected_time == pytest.approx(0.012, abs=1e-10)
     assert np.array_equal(values, saved)
+
+
+@pytest.mark.parametrize("defect", ["infinite_threshold", "nan_threshold", "negative_threshold", "nan_model", "zero_scale"])
+def test_invalid_frozen_analysis_cannot_create_a_null(locked_mock, defect):
+    model, threshold = copy.deepcopy(locked_mock)
+    public, _ = manifest("engineering", 1001)
+    metadata, samples = mock_run(public["assignments"][0], "unknown", 88)
+    if defect == "infinite_threshold": threshold["value"] = float("inf")
+    elif defect == "nan_threshold": threshold["value"] = float("nan")
+    elif defect == "negative_threshold": threshold["value"] = -1.0
+    elif defect == "nan_model": model["weights"][0][0] = float("nan")
+    else: model["scales"][0] = 0.0
+    with pytest.raises(ValueError):
+        analyze_run(metadata, samples, model, threshold)
+
+
+def test_finite_threshold_mutation_rejected(locked_mock):
+    model, threshold = copy.deepcopy(locked_mock)
+    public, _ = manifest("engineering", 1002)
+    threshold["value"] += 0.1
+    with pytest.raises(ValueError, match="mutation"):
+        analyze_run(*mock_run(public["assignments"][0], "null", 1), model, threshold)
+
+
+def test_baselines_choose_their_own_channels_not_residual_channels():
+    from src.gv_physical_program import TARGETS
+
+    rng = np.random.default_rng(82)
+    samples = {channel: rng.normal(0, 0.001, len(TIMES)) for channel in CHANNELS}
+    for channel, amplitude, time in zip(TARGETS, [10, 9, 1], [0.01, 0.01, 0.04]):
+        samples[channel] += amplitude * np.exp(-0.5 * ((TIMES - time) / 0.001)**2)
+    _, _, peak_coherent, rms_coherent = simple_scores(samples)
+    assert peak_coherent is True and rms_coherent is True
+
+
+def evaluation_fixture():
+    private, results = {"assignments": []}, []
+    for block in range(5):
+        _, key = manifest("evaluation", 92, block)
+        private["assignments"].extend(key["assignments"])
+        for row in key["assignments"]:
+            results.append({"run_id": row["run_id"], "origin": "synthetic", "valid": True,
+                            "residual_flag": row["arm"] == "active"})
+    return private, results
+
+
+@pytest.mark.parametrize("defect", ["active_count", "sham_count", "control_count", "control_hits", "sham_hits", "duplicate_key", "missing_raw"])
+def test_counts_controls_and_invalid_events_cannot_bypass_endpoint(defect):
+    private, results = evaluation_fixture()
+    assignments = {row["run_id"]: row["arm"] for row in private["assignments"]}
+    arm = {"active_count": "active", "sham_count": "sham", "control_count": "idle",
+           "control_hits": "idle", "sham_hits": "sham"}.get(defect)
+    if defect == "duplicate_key":
+        private["assignments"].append(copy.deepcopy(private["assignments"][0]))
+        with pytest.raises(ValueError, match="Duplicate"): summarize_results(results, private)
+        return
+    if defect == "missing_raw":
+        with pytest.raises(ValueError, match="every manifest"): summarize_results(results[:-1], private)
+        return
+    affected = [row for row in results if assignments[row["run_id"]] == arm]
+    if defect.endswith("count"):
+        for row in affected[:31 if arm in {"active", "sham"} else 6]: row["valid"] = False
+    else:
+        for row in affected[:3 if arm == "idle" else 30]: row["residual_flag"] = True
+    summary = summarize_results(results, private)
+    assert summary["screening_endpoint_met"] is False
+    assert summary["null_result_valid"] is False and summary["physical_evidence"] is False
+
+
+def test_missing_events_do_not_support_a_null_over_all_attempts():
+    private, results = evaluation_fixture()
+    assignments = {row["run_id"]: row["arm"] for row in private["assignments"]}
+    active = [row for row in results if assignments[row["run_id"]] == "active"]
+    for row in active: row["residual_flag"] = False
+    for row in active[:30]: row["valid"] = False
+    summary = summarize_results(results, private)
+    assert summary["groups"]["active"]["rate"] == 0
+    assert summary["groups"]["active"]["missing_worst_case_interval"][1] > 0.20
+    assert summary["null_result_valid"] is False
+
+
+def test_private_key_is_private_at_creation(tmp_path):
+    path = tmp_path / "operator-key.json"
+    write_json_new(path, {"seed": 7}, private=True)
+    assert path.stat().st_mode & 0o777 == 0o600
+
+
+def test_public_manifest_does_not_contain_arm_variant_or_seed():
+    public, _ = manifest("evaluation", 1003)
+    text = json.dumps(public)
+    assert all(f'"{key}"' not in text for key in ["seed", "arm", "variant"])
+
+
+def test_mock_unknown_can_be_ordinary_unmeasured_common_mode(locked_mock):
+    model, threshold = locked_mock
+    public, _ = manifest("engineering", 1004)
+    metadata, samples = mock_run(public["assignments"][0], "null", 93)
+    pulse = np.exp(-0.5 * ((TIMES - 0.012) / 0.002)**2)
+    for channel, amplitude in [("magnetic", 0.5), ("acceleration", 0.5), ("acoustic", 0.005)]:
+        samples[channel] += amplitude * pulse
+    result = analyze_run(metadata, samples, model, threshold)
+    assert result["residual_flag"] is True
+    assert result["physical_evidence"] is False
+
+
+def test_model_arithmetic_overflow_is_invalid_not_a_null(locked_mock):
+    model, threshold = copy.deepcopy(locked_mock)
+    model["weights"] = (np.ones((7, 3)) * 1e308).tolist()
+    model = sealed(model)
+    threshold["model_sha256"] = model["sha256"]
+    threshold = sealed(threshold)
+    public, _ = manifest("engineering", 1005)
+    with pytest.raises(ValueError, match="arithmetic"):
+        analyze_run(*mock_run(public["assignments"][0], "unknown", 94), model, threshold)
+
+
+def test_unblinded_event_label_rejected():
+    metadata, samples = valid_fixture()
+    metadata["blind_label"] = "active"
+    with pytest.raises(ValueError, match="Unblinded"):
+        validate_dataset(metadata, samples)
+
+
+def test_timing_budget_rejects_20us_per_sensor():
+    metadata, samples = valid_fixture()
+    metadata["calibrations"]["acoustic"]["latency_uncertainty_s"] = 0.00002
+    with pytest.raises(ValueError, match="latency"):
+        validate_dataset(metadata, samples)
+
+
+def test_string_validity_flag_cannot_bypass_counts():
+    private, results = evaluation_fixture()
+    results[0]["valid"] = "false"
+    with pytest.raises(ValueError, match="booleans"):
+        summarize_results(results, private)
+
+
+def test_mock_calibration_stages_have_no_reused_sample_streams(locked_mock):
+    model, threshold = locked_mock
+    assert not set(model["training_fingerprints"]) & set(threshold["calibration_fingerprints"])
+
+
+def test_changed_uuid_does_not_hide_copied_calibration_data(locked_mock):
+    from scripts.gv_phy_001 import calibration_records
+
+    model, threshold = locked_mock
+    metadata, samples = next(calibration_records("model_calibration", 44,
+                              ["null", "em", "vibration", "acoustic", "overlap", "environmental"]))
+    metadata["run_id"] = manifest("engineering", 2001)[0]["assignments"][0]["run_id"]
+    assert sample_fingerprint(samples) in model["training_fingerprints"]
+    with pytest.raises(ValueError, match="Content-level"):
+        analyze_run(metadata, samples, model, threshold)
+    with pytest.raises(ValueError, match="Content-level"):
+        lock_threshold([(metadata, samples)], model)

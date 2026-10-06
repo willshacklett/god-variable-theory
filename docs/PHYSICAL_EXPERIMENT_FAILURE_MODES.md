@@ -34,6 +34,13 @@ is excluded merely because a sensor or a checkbox exists.
 | Ordinary control/feedback dynamics | Same controller/flyback/LED paths in controls; do not confuse programmed settling with a distinctive mechanism. |
 | Model inadequacy / omitted cause | Held-out diagnostic controls, simpler baselines and sensor coverage review; residual is not attribution. |
 | Invalid-run selection / early stopping | Fixed attempted counts, prespecified flags, all raw captures retained; no replacement based on an interesting trace. |
+| RF rectification / electric-field blind spot | A low-frequency Hall witness cannot exclude it; qualify electric/RF response and terminated dummy receiver inputs before unexplained attribution. |
+| Current-loop geometry / coil core hysteresis | Freeze return routing, loop area and axes; source current alone is not a magnetic transfer model. |
+| Contact bounce / LED probe coupling | Preserve voltage/optical/current traces; isolated battery load can still couple through capacitance or instrument grounds. |
+| Frequency-dependent group delay | Scalar latency cannot remove arbitrary dispersion; characterize transfer functions or invalidate the v1 timing assumption. Never subtract real propagation. |
+| Calibration stream/content leakage | Reject overlapping UUIDs and waveform fingerprints; mock seeds are stage/run-namespaced. Different IDs alone do not establish independent data. |
+| Frozen threshold/model drift | Require pre-evaluation external lock and internal cross-binding; self-rewritten hashes cannot prove immutability. |
+| Missing-not-at-random runs / clustering | Retain all attempts and worst-case missing-event bounds; independent-binomial intervals are not certified for correlated blocks. |
 
 Failure of timing, calibration, sensitivity, required controls or acquisition is
 **INVALID / INCONCLUSIVE**, not support and not a valid null. Known-pathway

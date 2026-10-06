@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime, timezone
+import os
 from pathlib import Path
 import random
 import re
@@ -34,10 +35,11 @@ CLASSIFICATIONS = {
 }
 
 
-def write_json_new(path: Path, payload: dict) -> str:
+def write_json_new(path: Path, payload: dict, private: bool = False) -> str:
     serialized = (json.dumps(payload, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("xb") as handle:
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600 if private else 0o644)
+    with os.fdopen(descriptor, "wb") as handle:
         handle.write(serialized)
     return hashlib.sha256(serialized).hexdigest()
 
@@ -77,7 +79,7 @@ def calibration_metadata() -> dict:
     return {
         channel: {"units": units, "version": "MOCK-CAL-1", "gain": 1.0,
                   "offset": 0.0, "range_min": -100.0, "range_max": 100.0,
-                  "latency_s": 0.0, "latency_uncertainty_s": 0.00002, "kind": "synthetic"}
+                  "latency_s": 0.0, "latency_uncertainty_s": 0.00001, "kind": "synthetic"}
         for channel, units in CHANNELS.items()
     }
 
@@ -102,7 +104,7 @@ def validate_dataset(metadata: dict, samples: dict[str, np.ndarray]) -> None:
         raise ValueError("Invalid manifest digest")
     if not metadata["hardware_configuration"] or not isinstance(metadata["environment"], dict):
         raise ValueError("Hardware/environment metadata required")
-    if metadata["event_type"] != "WITHHELD" or not metadata["blind_label"]:
+    if metadata["event_type"] != "WITHHELD" or not re.fullmatch(r"B-[0-9a-f]{24}", metadata["blind_label"]):
         raise ValueError("Unblinded analysis input")
     if set(samples) != {*CHANNELS, "sample_index"}:
         raise ValueError("Missing or unexpected raw channels")
@@ -128,7 +130,7 @@ def validate_dataset(metadata: dict, samples: dict[str, np.ndarray]) -> None:
         numeric = [calibration[key] for key in ("gain", "offset", "range_min", "range_max", "latency_s", "latency_uncertainty_s")]
         if not np.all(np.isfinite(numeric)) or calibration["gain"] <= 0:
             raise ValueError("Invalid calibration values")
-        latency_limit = 0.5 if channel == "temperature" else 0.00002
+        latency_limit = 0.5 if channel == "temperature" else 0.00001
         if not 0 <= calibration["latency_uncertainty_s"] <= latency_limit:
             raise ValueError("Uncharacterized sensor latency")
         if channel != "temperature" and abs(calibration["latency_s"]) > 0.01:
@@ -256,10 +258,16 @@ def features(samples: dict) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 
 def calibrated_samples(metadata: dict, samples: dict) -> dict:
+    try:
+        with np.errstate(over="raise", invalid="raise"):
+            corrected = {channel: samples[channel] * metadata["calibrations"][channel]["gain"]
+                         + metadata["calibrations"][channel]["offset"] for channel in CHANNELS}
+    except FloatingPointError as error:
+        raise ValueError("Nonfinite calibration arithmetic") from error
+    if any(not np.all(np.isfinite(values)) for values in corrected.values()):
+        raise ValueError("Nonfinite corrected samples")
     return {"sample_index": samples["sample_index"], "_latencies": {
-        channel: metadata["calibrations"][channel]["latency_s"] for channel in CHANNELS}, **{
-        channel: samples[channel] * metadata["calibrations"][channel]["gain"]
-        + metadata["calibrations"][channel]["offset"] for channel in CHANNELS}}
+        channel: metadata["calibrations"][channel]["latency_s"] for channel in CHANNELS}, **corrected}
 
 
 def check_timing(samples: dict) -> bool:
@@ -269,10 +277,25 @@ def check_timing(samples: dict) -> bool:
                 and len(reference_edges) >= 8 and np.all(np.abs(np.diff(reference_edges) - 1000) <= 1))
 
 
+def sealed(payload: dict) -> dict:
+    content = {key: value for key, value in payload.items() if key != "sha256"}
+    digest = hashlib.sha256(json.dumps(content, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    return {**content, "sha256": digest}
+
+
+def sample_fingerprint(samples: dict) -> str:
+    digest = hashlib.sha256()
+    for channel in sorted(CHANNELS):
+        digest.update(channel.encode())
+        digest.update(np.asarray(samples[channel], dtype="<f8").tobytes())
+    return digest.hexdigest()
+
+
 def fit_model(records) -> dict:
-    predictors, targets, ids, origins = [], [], [], set()
+    predictors, targets, ids, fingerprints, origins = [], [], [], [], set()
     for metadata, samples in records:
         validate_dataset(metadata, samples)
+        fingerprints.append(sample_fingerprint(samples))
         samples = calibrated_samples(metadata, samples)
         if not check_timing(samples): raise ValueError("Invalid calibration timing")
         observed, response, _ = features(samples)
@@ -280,65 +303,127 @@ def fit_model(records) -> dict:
         ids.append(metadata["run_id"]); origins.add(metadata["origin"])
     if len(ids) < 240 or len(ids) != len(set(ids)) or len(origins) != 1:
         raise ValueError("Need 240 distinct, single-origin model calibration runs")
+    if len(fingerprints) != len(set(fingerprints)):
+        raise ValueError("Duplicate model calibration waveform")
     design, response = np.asarray(predictors), np.asarray(targets)
     scales = np.maximum(np.std(design, axis=0), 1e-12); scales[0] = 1.0
     weights = np.linalg.solve((design / scales).T @ (design / scales) + np.eye(design.shape[1]) * 1e-6,
                               (design / scales).T @ response)
     residual = response - (design / scales) @ weights
     residual_sigma = np.maximum(1.4826 * np.median(np.abs(residual - np.median(residual, axis=0)), axis=0), 1e-6)
-    return {"version": "GV-PHY-001-FEATURE-1", "origin": origins.pop(), "training_ids": ids,
+    return sealed({"version": "GV-PHY-001-FEATURE-1", "origin": origins.pop(), "training_ids": ids,
+            "training_fingerprints": fingerprints,
             "weights": weights.tolist(), "scales": scales.tolist(),
-            "residual_sigma": residual_sigma.tolist()}
+            "residual_sigma": residual_sigma.tolist()})
 
 
 def residual_score(samples: dict, model: dict) -> tuple[float, bool]:
     observed, response, peak_times = features(samples)
-    residual = (response - (observed / np.array(model["scales"])) @ np.array(model["weights"])) / np.array(model["residual_sigma"])
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            residual = (response - (observed / np.array(model["scales"])) @ np.array(model["weights"])) / np.array(model["residual_sigma"])
+    except FloatingPointError as error:
+        raise ValueError("Nonfinite residual arithmetic") from error
+    if not np.all(np.isfinite(residual)):
+        raise ValueError("Nonfinite residual")
     selected = np.argsort(residual)[-2:]
     coherent = bool(abs(peak_times[selected[0]] - peak_times[selected[1]]) <= 0.001)
     return float(np.sort(residual)[-2]), coherent
 
 
-def simple_scores(samples: dict) -> tuple[float, float]:
-    peaks, rms = [], []
+def simple_scores(samples: dict) -> tuple[float, float, bool, bool]:
+    peaks, rms, times = [], [], []
     latencies = samples.get("_latencies", dict.fromkeys(CHANNELS, 0.0))
     for channel in TARGETS:
-        value, sigma, _ = peak(samples[channel], latencies[channel])
+        value, sigma, peak_time = peak(samples[channel], latencies[channel])
         center, _ = baseline_noise(samples[channel], latencies[channel])
         peaks.append(value / sigma)
+        times.append(peak_time)
         rms.append(float(np.sqrt(np.mean(((window(samples[channel], EVENT, latencies[channel]) - center) / sigma)**2))))
-    return float(np.sort(peaks)[-2]), float(np.sort(rms)[-2])
+    peak_pair, rms_pair = np.argsort(peaks)[-2:], np.argsort(rms)[-2:]
+    return (float(np.sort(peaks)[-2]), float(np.sort(rms)[-2]),
+            bool(abs(times[peak_pair[0]] - times[peak_pair[1]]) <= 0.001),
+            bool(abs(times[rms_pair[0]] - times[rms_pair[1]]) <= 0.001))
+
+
+def validate_locked_analysis(model: dict, threshold: dict | None = None) -> None:
+    if model.get("sha256") != sealed(model)["sha256"]:
+        raise ValueError("Frozen model mutation")
+    if model.get("version") != "GV-PHY-001-FEATURE-1" or model.get("origin") not in {"synthetic", "physical"}:
+        raise ValueError("Invalid frozen model version/origin")
+    for field, shape in [("weights", (7, 3)), ("scales", (7,)), ("residual_sigma", (3,))]:
+        values = np.asarray(model.get(field), dtype=float)
+        if values.shape != shape or not np.all(np.isfinite(values)):
+            raise ValueError("Invalid frozen model arrays")
+        if field != "weights" and np.any(values <= 0):
+            raise ValueError("Frozen normalization must be positive")
+    training = model.get("training_ids", [])
+    if len(training) < 240 or len(set(training)) != len(training):
+        raise ValueError("Invalid model calibration IDs")
+    fingerprints = model.get("training_fingerprints", [])
+    if len(fingerprints) != len(training) or len(set(fingerprints)) != len(fingerprints):
+        raise ValueError("Invalid model waveform fingerprints")
+    if threshold is None:
+        return
+    if threshold.get("sha256") != sealed(threshold)["sha256"] or threshold.get("model_sha256") != model["sha256"]:
+        raise ValueError("Frozen threshold mutation or model mismatch")
+    if threshold.get("origin") != model["origin"] or threshold.get("target_fpr") != 0.01:
+        raise ValueError("Invalid frozen threshold origin/FPR")
+    for field in ("value", "simple_peak_value", "simple_rms_value"):
+        value = threshold.get(field)
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or not np.isfinite(value) or value < 8:
+            raise ValueError("Invalid frozen threshold value")
+    calibration = threshold.get("calibration_ids", [])
+    if len(calibration) < 240 or len(set(calibration)) != len(calibration) or set(training) & set(calibration):
+        raise ValueError("Calibration leakage or invalid threshold IDs")
+    calibration_fingerprints = threshold.get("calibration_fingerprints", [])
+    if (len(calibration_fingerprints) != len(calibration)
+            or len(set(calibration_fingerprints)) != len(calibration_fingerprints)
+            or set(fingerprints) & set(calibration_fingerprints)):
+        raise ValueError("Content-level calibration leakage")
 
 
 def lock_threshold(records, model: dict) -> dict:
-    scores, peak_scores, rms_scores, ids = [], [], [], []
+    validate_locked_analysis(model)
+    scores, peak_scores, rms_scores, ids, fingerprints = [], [], [], [], []
     for metadata, samples in records:
         validate_dataset(metadata, samples)
+        fingerprint = sample_fingerprint(samples)
+        if fingerprint in model["training_fingerprints"]:
+            raise ValueError("Content-level calibration leakage")
+        fingerprints.append(fingerprint)
         samples = calibrated_samples(metadata, samples)
         if metadata["origin"] != model["origin"] or not check_timing(samples):
             raise ValueError("Calibration origin/timing mismatch")
         if metadata["run_id"] in model["training_ids"]:
             raise ValueError("Model/threshold calibration leakage")
         scores.append(residual_score(samples, model)[0]); ids.append(metadata["run_id"])
-        simple_peak, simple_rms = simple_scores(samples)
+        simple_peak, simple_rms, _, _ = simple_scores(samples)
         peak_scores.append(simple_peak); rms_scores.append(simple_rms)
     if len(ids) < 240 or len(ids) != len(set(ids)):
         raise ValueError("Need 240 distinct threshold calibration events")
-    return {"value": max(8.0, float(np.quantile(scores, 0.99, method="higher"))),
+    if len(fingerprints) != len(set(fingerprints)):
+        raise ValueError("Duplicate threshold calibration waveform")
+    return sealed({"value": max(8.0, float(np.quantile(scores, 0.99, method="higher"))),
             "simple_peak_value": max(8.0, float(np.quantile(peak_scores, 0.99, method="higher"))),
             "simple_rms_value": max(8.0, float(np.quantile(rms_scores, 0.99, method="higher"))),
-            "calibration_ids": ids, "target_fpr": 0.01, "origin": model["origin"]}
+            "calibration_ids": ids, "target_fpr": 0.01, "origin": model["origin"],
+            "calibration_fingerprints": fingerprints,
+            "model_sha256": model["sha256"]})
 
 
 def analyze_run(metadata: dict, samples: dict, model: dict, threshold: dict) -> dict:
+    validate_locked_analysis(model, threshold)
     validate_dataset(metadata, samples)
+    if sample_fingerprint(samples) in model["training_fingerprints"] + threshold["calibration_fingerprints"]:
+        raise ValueError("Content-level evaluation leakage")
     samples = calibrated_samples(metadata, samples)
     if metadata["origin"] != model["origin"] or metadata["origin"] != threshold["origin"]:
         raise ValueError("Synthetic/physical origin mismatch")
     if metadata["run_id"] in model["training_ids"] + threshold["calibration_ids"]:
         raise ValueError("Evaluation data leakage")
     score, coherent = residual_score(samples, model)
-    simple_peak, simple_rms = simple_scores(samples)
+    simple_peak, simple_rms, peak_coherent, rms_coherent = simple_scores(samples)
     candidate = bool(score > threshold["value"] and coherent)
     causes = []
     if not check_timing(samples): causes.append("TIMING ARTIFACT"); candidate = False
@@ -361,11 +446,13 @@ def analyze_run(metadata: dict, samples: dict, model: dict, threshold: dict) -> 
         classification = "UNATTRIBUTED RESIDUAL - REQUIRES CONTROLS"
     return {"run_id": metadata["run_id"], "origin": metadata["origin"],
             "physical_evidence": False,
-            "valid": check_timing(samples),
+            "valid": check_timing(samples) and metadata["origin"] == "synthetic",
+            "format_valid": True, "timing_screen_passed": check_timing(samples),
+            "physical_assay_certified": False,
             "classification": classification, "known_channels_present": causes,
             "score": score, "coherent": coherent, "residual_flag": candidate,
-            "simple_peak_flag": bool(simple_peak > threshold["simple_peak_value"] and coherent and check_timing(samples)),
-            "simple_rms_flag": bool(simple_rms > threshold["simple_rms_value"] and coherent and check_timing(samples)),
+            "simple_peak_flag": bool(simple_peak > threshold["simple_peak_value"] and peak_coherent and check_timing(samples)),
+            "simple_rms_flag": bool(simple_rms > threshold["simple_rms_value"] and rms_coherent and check_timing(samples)),
             "interpretation": WARNING if metadata["origin"] == "synthetic" else
             "Screening only; measured references do not establish causal attribution"}
 
@@ -384,6 +471,13 @@ def proportion_interval(hits: int, total: int, alpha: float = 0.05) -> dict:
 def summarize_results(results: list[dict], private: dict) -> dict:
     if {row["origin"] for row in results} != {"synthetic"}:
         raise NotImplementedError("Physical conclusions require independent hardware/control review")
+    if any(type(row.get(field)) is not bool for row in results for field in ("valid", "residual_flag")):
+        raise ValueError("Result validity/detection flags must be booleans")
+    private_ids = [row["run_id"] for row in private["assignments"]]
+    if len(private_ids) != len(set(private_ids)):
+        raise ValueError("Duplicate private manifest IDs")
+    if any(row["arm"] not in {"active", "sham", *CONTROL_ARMS} for row in private["assignments"]):
+        raise ValueError("Unknown manifest arm")
     assignments = {row["run_id"]: row["arm"] for row in private["assignments"]}
     ids = [row["run_id"] for row in results]
     if len(ids) != len(set(ids)) or set(ids) != set(assignments):
@@ -394,6 +488,9 @@ def summarize_results(results: list[dict], private: dict) -> dict:
         valid = [row for row in selected if row["valid"]]
         groups[arm] = proportion_interval(sum(row["residual_flag"] for row in valid), len(valid))
         groups[arm].update(attempted=len(selected), invalid=len(selected) - len(valid))
+        lower = proportion_interval(groups[arm]["hits"], len(selected), 0.025)["interval"][0]
+        upper = proportion_interval(groups[arm]["hits"] + groups[arm]["invalid"], len(selected), 0.025)["interval"][1]
+        groups[arm]["missing_worst_case_interval"] = [lower, upper]
         groups[arm]["simple_peak_hits"] = sum(row.get("simple_peak_flag", False) for row in valid)
         groups[arm]["simple_rms_hits"] = sum(row.get("simple_rms_flag", False) for row in valid)
     active = groups.get("active", proportion_interval(0, 0))
@@ -412,15 +509,22 @@ def summarize_results(results: list[dict], private: dict) -> dict:
         for variant in ("shielding", "distance")}
     enough = enough and all(count >= 20 for count in em_subconditions.values())
     controls_pass = all(groups.get(arm, {"hits": 999})["hits"] <= 2 for arm in CONTROL_ARMS)
+    missing_bounds = [None, None]
+    if active["n"] and sham["n"]:
+        missing_bounds = [active["missing_worst_case_interval"][0] - sham["missing_worst_case_interval"][1],
+                          active["missing_worst_case_interval"][1] - sham["missing_worst_case_interval"][0]]
     endpoint = bool(enough and controls_pass and difference >= 0.10 and bounds[0] > 0
-                    and sham["interval"][1] <= 0.05)
+                    and missing_bounds[0] > 0 and sham["interval"][1] <= 0.05)
     return {"experiment_id": EXPERIMENT_ID, "status": "INVALID / INCONCLUSIVE",
             "physical_evidence": False, "warning": WARNING,
             "groups": groups, "risk_difference": difference, "risk_difference_interval": bounds,
+            "missing_worst_case_risk_difference_interval": missing_bounds,
             "minimum_valid_counts_met": enough, "diagnostic_controls_pass": controls_pass,
             "em_subcondition_valid_counts": em_subconditions,
-            "frozen_endpoint_met": endpoint,
+            "screening_endpoint_met": endpoint, "frozen_endpoint_met": False,
+            "physical_assay_certified": False, "null_result_valid": False,
             "reason": "Mock-only software; physical control validation and replication not established",
+            "interval_assumptions": "Descriptive independent-Bernoulli intervals only; block dependence has not been certified",
             "missing_detections": "Retained as non-detections; no lead-time endpoint", "lead_time": None}
 
 
@@ -432,4 +536,5 @@ def inspect_run(metadata: dict, samples: dict, model: dict, threshold: dict) -> 
         return {"run_id": metadata["run_id"], "origin": metadata["origin"], "valid": False,
             "physical_evidence": False,
                 "classification": "SOFTWARE ARTIFACT" if software else "INVALID ACQUISITION",
-                "residual_flag": False, "reason": str(error), "interpretation": WARNING}
+                "residual_flag": False, "physical_assay_certified": False,
+                "reason": str(error), "interpretation": WARNING}
