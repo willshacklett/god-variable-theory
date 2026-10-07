@@ -7,6 +7,21 @@ A flexible name covering any unexplained observation is not a falsifiable theory
 No universal physical GV claim is currently supported or sufficiently specified
 to earn confirmation.
 
+## What a Physical GV Claim Must Add
+
+The operational statistic $G$ is not GV. An unexplained residual is evidence of
+model inadequacy, not automatic evidence for a new cause. A generic finite-
+dimensional hidden-state GV is reducible to ordinary state-space/control theory;
+renaming a latent state or residual does not distinguish it. No nontrivial
+cross-system transition invariant has been derived.
+
+A physical GV formulation must therefore state a quantitative additional law,
+constraint, coupling, or independently measurable observable. It must yield at
+least one preregistered, held-out prediction that quantitatively outperforms the
+strongest ordinary model, without defining that prediction from the observed
+outcome. Historical $\alpha$, Switch activation, entropy repayment, and the
+proposed GV-to-A relation do not currently provide such a specified prediction.
+
 ## Required Rejection Rules
 
 | Failure | Decision for the tested claim |
@@ -49,6 +64,9 @@ Different formulations can fail independently. A revised formulation must:
 4. State how the new prediction differs measurably from both its failed predecessor
    and ordinary explanations, with a fixed failure condition.
 5. Report the cumulative record rather than presenting only the surviving version.
+6. If a physical mechanism is claimed, provide its additional quantitative
+   restriction and a prospective discriminating prediction; otherwise retain the
+   conclusion at the operational-statistic or unexplained-anomaly level.
 
 The launch does not revise historical weights or promote a failed formulation
 because a broader metaphor remains possible. Repeated reformulation without new

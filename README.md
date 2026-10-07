@@ -41,8 +41,8 @@ survival of known-cause controls, held-out discrimination, and performance again
 simpler baselines. A residual alone is insufficient. Thresholds must be frozen
 before confirmatory data, not chosen after seeing an anomaly.
 
-See the [canonical definition](docs/THEORY.md), [claims ladder](docs/CLAIMS.md),
-and [competing explanations](docs/ALTERNATIVE_EXPLANATIONS.md).
+See the [canonical definition](docs/THEORY.md), [current GV status](docs/GV_STATUS.md),
+[claims ladder](docs/CLAIMS.md), and [competing explanations](docs/ALTERNATIVE_EXPLANATIONS.md).
 
 ## What Has Failed?
 

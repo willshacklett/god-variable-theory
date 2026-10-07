@@ -2,6 +2,28 @@
 
 **THE GOD VARIABLE HAS NOT BEEN CONFIRMED.**
 
+## Three Layers of Meaning
+
+Keep three distinct uses of “GV” separate:
+
+1. **Historical GV** is the speculative material preserved in the root
+   [`THEORY.md`](../THEORY.md), [`PAPER.md`](../PAPER.md), and
+   [`entropy_damping.md`](../entropy_damping.md). Its equations, $\alpha$,
+   Switch language, entropy proposals, and original interpretations remain
+   historical hypotheses. Their dimensional, dynamical, and empirical meanings
+   are unresolved; preserving them does not validate them.
+2. **Operational GV** is the research framework defined here: measurements,
+   known-model comparisons, candidate statistics, preregistered tests, Local
+   Tuning endpoints, ordinary baselines, and explicit rejection rules.
+3. **Physical GV** would be a specified physical law, constraint, coupling, or
+   independently measurable observable. It is presently unspecified. A physical
+   claim requires at least one preregistered quantitative prediction that
+   outperforms the strongest ordinary model on held-out data.
+
+> **$G \neq GV$.** $G$ is a formulation-specific measured statistic, not the
+> hypothesized physical entity. An unexplained residual is evidence that the
+> tested model is inadequate for the data; it is not automatic evidence for GV.
+
 The God Variable (GV) is hypothetical. This independent open research project
 asks whether some state transitions have reproducible signatures not accounted
 for by known causal pathways and simpler models. It does not establish a deity,
@@ -42,6 +64,10 @@ $G(t)$ is a measured statistic, not the hypothesized GV itself. It must have a
 versioned definition, fixed features/weights, declared units or normalization,
 calibration population, missing-alarm treatment, and decision rule before test
 data are opened. A large $G$ does not by itself identify a cause.
+
+Generic finite-dimensional hidden-state representations of GV are reducible to
+ordinary state-space/control theory unless they impose an additional, testable
+restriction. No nontrivial cross-system transition invariant has been derived.
 
 ## Testable Candidate Criteria
 
@@ -133,6 +159,8 @@ Measure a candidate signature during $T$ separately from whether A is reached.
 If ordinary feedback explains both $T$ and A, the GV-specific claim fails even
 when the controller works well.
 
+Local Tuning therefore defines a measurable endpoint, not a GV mechanism.
+
 ## Existing Mathematics and Its Limits
 
 Historical proposal:
@@ -146,10 +174,24 @@ unspecified. The cosmology toy instead integrates over scale factor; that is not
 the same mathematical object. Tuning to observed $\Lambda$ is not an independent
 derivation, and imposed entropy repayment is not a demonstrated mechanism.
 
+The historical descriptions of $\alpha$ as initiating, boundary, or origin term
+do not uniquely determine whether it is a source, boundary functional, initial
+condition, symmetry-breaking coupling, intervention, integration constant, or
+dimensionless parameter. The displayed equation supplies no evolution law or
+coupling that would decide among these roles. Treating $\alpha$ as dimensionless
+would require an explicit reference scale before adding it to an energy.
+
 The historical switch extension $G_v(t)=\int\rho_{\mathrm{total}}dV+\alpha A(t)$
 uses $A(t)$ as an activation function. In this canonical notation call that
 function $a_{\mathrm{act}}(t)$, leaving the old text intact. It is **not** the
 aligned state A. No empirical mapping from either proposal to $G(t)$ is known.
+The Switch specifies no unique activation dynamics, discontinuity, bifurcation,
+boundary-condition change, or causal intervention.
+
+The historical entropy-repayment proposal is unoperationalized: the system
+boundary, entropy accounting, repayment channel, and quantitative endpoint are
+not defined well enough to derive a test here. Preserve it as a separate
+falsifiable hypothesis candidate, not as established GV structure.
 
 The computationally explicit fluid formulation is stronger as a testable object:
 
