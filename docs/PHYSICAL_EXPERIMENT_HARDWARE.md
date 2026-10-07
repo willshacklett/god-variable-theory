@@ -148,3 +148,13 @@ flammable material away. Never defeat scope earth or improvise mains isolation.
 An electronics reviewer must approve the actual schematic and instrument interface
 before construction. Component-specific driver/software and wiring are not supplied
 as a certified build today; this limitation keeps the program PENDING.
+
+## Detailed Design-Review Package
+
+See [construction readiness and status decision](GV_PHY_001_CONSTRUCTION_READINESS.md),
+[channel map](GV_PHY_001_CHANNEL_MAP.md), [component requirements](GV_PHY_001_COMPONENT_REQUIREMENTS.md),
+[timing certification](GV_PHY_001_TIMING_PLAN.md), [sensor calibration](GV_PHY_001_SENSOR_CALIBRATION.md),
+[fixture layout](GV_PHY_001_FIXTURE_LAYOUT.md), [power/grounding](GV_PHY_001_POWER_AND_GROUNDING.md),
+and [sensitivity](GV_PHY_001_SENSITIVITY_PLAN.md). The two new electric/RF diagnostic
+classes share the proposed DAQ but remain ancillary; no searched channel, core raw
+format or scientific endpoint is changed. Actual hardware/export integration is absent.

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "format": "Native strict manifest contract; validation in src/gv_physical_acquisition.py, not JSON Schema dialect",
+  "experiment_id": "GV-PHY-001",
+  "channel_map_version": "GV-PHY-001-MAP-1",
+  "preregistration_version": "GV-PHY-001-provisional-v1-2026-10-06",
+  "required": ["schema_version", "experiment_id", "origin", "apparatus_id", "relay_specification_id", "driver_configuration", "power_configuration", "daq_configuration", "channel_map_version", "channels", "diagnostics", "fixture_version", "cable_configuration", "shielding_configuration", "software_commit_sha", "preregistration_version", "preregistration_sha256", "operator", "timestamp_utc", "configuration_hash"],
+  "origins": ["design", "synthetic"],
+  "physical_driver_supported": false,
+  "core_channel_count": 13,
+  "diagnostic_channels": ["electric_reference", "rf_envelope_reference"],
+  "hash_rule": "SHA-256 over canonical sorted compact ASCII JSON excluding configuration_hash; allow_nan=False",
+  "raw_binding": "metadata.hardware_configuration equals configuration_hash. Save the full hardware manifest and calibration registry separately; their hash does not certify physical authenticity.",
+  "readiness": "Manifest validity never promotes PENDING, authorizes construction or proves calibration/timing/sensitivity. Physical acquisition is blocked."
+}

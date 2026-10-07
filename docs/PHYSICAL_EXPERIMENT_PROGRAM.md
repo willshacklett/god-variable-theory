@@ -356,6 +356,13 @@ certificates, hardware configuration hashes, signed operator/witness logs, times
 manifest deposit and read-only native exports give traceability, not certainty against
 fabrication. No new provenance authority or purchased apparatus is implied.
 
+The subsequent [hardware design-review package](GV_PHY_001_CONSTRUCTION_READINESS.md)
+adds channel/component/fixture/ground/timing/calibration/sensitivity plans,
+an [instrumentation pilot](../experiments/GV_PHY_001_INSTRUMENTATION_PILOT.md),
+a [null validity checklist](../experiments/GV_PHY_001_NULL_VALIDITY_CHECKLIST.md)
+and a guarded non-operational acquisition interface. These review artifacts do not
+complete the physical qualification items above. **GV-PHY-001 remains PENDING.**
+
 ### False Positives and False Negatives
 
 Ordinary common-mode pickup without reference-channel activity passes the same toy
