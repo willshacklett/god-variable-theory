@@ -27,7 +27,7 @@ repayment may be investigated as a separate falsifiable hypothesis candidate.
 
 ## Next Scientific Requirement
 
-Specify and preregister at least one prospective quantitative prediction that
-differs from the strongest ordinary model. Do not define the prediction from the
+Specify and preregister at least one held-out quantitative prediction that
+outperforms the strongest ordinary model. Do not define the prediction from the
 observed outcome or treat an unexplained residual as automatic evidence for GV.
 No such prediction is supplied by this status document.

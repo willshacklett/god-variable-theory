@@ -17,10 +17,10 @@ cross-system transition invariant has been derived.
 
 A physical GV formulation must therefore state a quantitative additional law,
 constraint, coupling, or independently measurable observable. It must yield at
-least one prospective prediction that differs from the strongest ordinary model
-without defining that prediction from the observed outcome. Historical $\alpha$,
-Switch activation, entropy repayment, and the proposed GV-to-A relation do not
-currently provide such a specified prediction.
+least one preregistered, held-out prediction that quantitatively outperforms the
+strongest ordinary model, without defining that prediction from the observed
+outcome. Historical $\alpha$, Switch activation, entropy repayment, and the
+proposed GV-to-A relation do not currently provide such a specified prediction.
 
 ## Required Rejection Rules
 

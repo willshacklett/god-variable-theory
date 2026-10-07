@@ -17,8 +17,8 @@ Keep three distinct uses of “GV” separate:
    Tuning endpoints, ordinary baselines, and explicit rejection rules.
 3. **Physical GV** would be a specified physical law, constraint, coupling, or
    independently measurable observable. It is presently unspecified. A physical
-   claim requires quantitative prospective predictions distinguishable from the
-   strongest ordinary model.
+   claim requires at least one preregistered quantitative prediction that
+   outperforms the strongest ordinary model on held-out data.
 
 > **$G \neq GV$.** $G$ is a formulation-specific measured statistic, not the
 > hypothesized physical entity. An unexplained residual is evidence that the

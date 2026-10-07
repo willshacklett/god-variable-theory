@@ -64,7 +64,7 @@ unique activation dynamics; and the historical entropy proposal is not
 operationalized. Treat entropy repayment as a separate hypothesis candidate,
 not established GV structure.
 
-The next scientific requirement is at least one preregistered prospective
-prediction that differs quantitatively from the strongest ordinary model.
-Do not invent or imply that prediction before specifying and independently
+The next scientific requirement is at least one preregistered prospective,
+held-out prediction that quantitatively outperforms the strongest ordinary
+model. Do not invent or imply that prediction before specifying and independently
 justifying the additional law, constraint, coupling, or measurement.
