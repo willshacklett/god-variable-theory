@@ -1,5 +1,8 @@
 # Experiment Roadmap
 
+See [GV status](GV_STATUS.md) for the distinction between historical, operational,
+and presently unspecified physical GV.
+
 Roadmap statuses describe progress, not evidential support: **DONE**, **FAILED**,
 **INCONCLUSIVE**, **READY**, **FUTURE**. The controlled scientific statuses live
 in the [ledger](EVIDENCE.md). READY means a documented computational/protocol step,
@@ -27,7 +30,7 @@ not certified assembled equipment. Hardware purchase is not a launch prerequisit
 | Historical tether/feedback illustrations | INCONCLUSIVE | Encoded strain damping and aligned labels do not identify GV. |
 | Operational A definition | READY | [Target error/stabilization definition](THEORY.md); measurable proposed endpoint, not a completed physical result. |
 | TUNING-HW-001 original record | FUTURE | No located original protocol or dataset. PENDING provenance; cannot certify hardware-ready or completed. |
-| Prospective transition-signature comparison | FUTURE | Freeze $S_0$, $T$, A, ordinary controller baseline, sham, $K$, $G$ and held-out evaluation. |
+| Prospective transition-signature comparison | FUTURE | Freeze $S_0$, $T$, A, ordinary controller baseline, sham, $K$, $G$ and held-out evaluation. A is an endpoint, not a GV mechanism or established causal consequence of GV. |
 
 Separate reaching A from identifying a distinctive signature during T. Reduced
 error from ordinary feedback is a useful controller result, not evidence for GV.
@@ -51,3 +54,17 @@ does not provide.
 Launch deliverables are transparent documentation, an auditable ledger, executable
 computational checks and invitation to criticism. Physical experiments can remain
 open without blocking a public research baseline.
+
+## Cross-Cutting Scientific Requirement
+
+Generic hidden-state GV is representable within ordinary state-space/control
+theory, and no nontrivial cross-system invariant has been derived. Historical
+$\alpha$ has no uniquely determined mathematical role; the Switch supplies no
+unique activation dynamics; and the historical entropy proposal is not
+operationalized. Treat entropy repayment as a separate hypothesis candidate,
+not established GV structure.
+
+The next scientific requirement is at least one preregistered prospective
+prediction that differs quantitatively from the strongest ordinary model.
+Do not invent or imply that prediction before specifying and independently
+justifying the additional law, constraint, coupling, or measurement.
