@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "checked_date_utc": "2026-10-10",
+  "study_status": "design_not_run",
+  "real_measurements_included": false,
+  "verified_available_datasets": [],
+  "verification_limitation": "Direct web_fetch and curl requests failed DNS resolution for all four CERN hosts. No page content, dataset, access policy, units or timing metadata was verified.",
+  "source_leads": [
+    {
+      "name": "LHC Programme Coordination",
+      "url": "https://lpc.web.cern.ch/",
+      "verification_status": "unverified_dns_failure",
+      "access_status": "unknown",
+      "intended_records": ["fill chronology", "beam-mode transitions", "stable-beam intervals"],
+      "verified_variables": [],
+      "units": null,
+      "timestamp_precision": null,
+      "timestamp_accuracy": null,
+      "synchronized_measurements_verified": false,
+      "restrictions": "Actual publication, export availability and permission unverified."
+    },
+    {
+      "name": "NXCALS documentation",
+      "url": "https://nxcals-docs.web.cern.ch/",
+      "verification_status": "unverified_dns_failure",
+      "access_status": "authorization_not_established",
+      "intended_records": ["magnet ramps", "beam modes", "beam losses", "dump and timing logs"],
+      "verified_variables": [],
+      "units": null,
+      "timestamp_precision": null,
+      "timestamp_accuracy": null,
+      "synchronized_measurements_verified": false,
+      "restrictions": "Do not access operational logging without explicit authorization; public documentation would not imply public data."
+    },
+    {
+      "name": "CERN Open Data",
+      "url": "https://opendata.cern.ch/docs/about",
+      "verification_status": "unverified_dns_failure",
+      "access_status": "unknown",
+      "intended_records": ["specific public releases with operational timestamps and synchronized measurements"],
+      "verified_variables": [],
+      "units": null,
+      "timestamp_precision": null,
+      "timestamp_accuracy": null,
+      "synchronized_measurements_verified": false,
+      "restrictions": "No eligible release or licence verified; collision data are not a substitute for operational logs."
+    },
+    {
+      "name": "CERN Document Server record lead",
+      "url": "https://cds.cern.ch/record/1129806",
+      "verification_status": "unverified_dns_failure",
+      "access_status": "unknown",
+      "intended_records": ["accelerator design and instrumentation publication references"],
+      "verified_variables": [],
+      "units": null,
+      "timestamp_precision": null,
+      "timestamp_accuracy": null,
+      "synchronized_measurements_verified": false,
+      "restrictions": "Record identity and contents unverified; not a confirmed publication citation or dataset."
+    }
+  ],
+  "required_export_metadata": [
+    "persistent source identifier", "owner and authorized access or licence",
+    "retrieval date and checksum", "fill/run/beam identifiers",
+    "variable definitions and units", "calibration and uncertainty",
+    "clock time scale and timestamp encoding", "precision and accuracy",
+    "sampling and integration intervals", "latency and missingness",
+    "synchronization evidence", "command versus response markers",
+    "collision status per interaction point", "prior machine history"
+  ],
+  "software_fixtures": {
+    "location": "test_analysis.py",
+    "provenance": "synthetic",
+    "scientific_evidence": false
+  }
+}
