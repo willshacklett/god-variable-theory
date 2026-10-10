@@ -127,6 +127,32 @@ class AnalysisTests(unittest.TestCase):
             self.assertIsNone(source["timestamp_precision"])
             self.assertFalse(source["synchronized_measurements_verified"])
 
+    def test_phase_2_findings_are_attributed_not_verified(self):
+        inventory = json.loads((DIRECTORY / "data_inventory.json").read_text(encoding="utf-8"))
+        phase = inventory["phase_2"]
+        self.assertEqual(len(phase["source_assessments"]), 3)
+        for source in phase["source_assessments"]:
+            self.assertEqual(source["finding_provenance"], "task_owner_report")
+            self.assertEqual(source["direct_verification_status"], "dns_failure")
+            self.assertEqual(source["curl_exit_code"], 6)
+            self.assertIsNone(source["http_status"])
+            self.assertFalse(source["content_retrieved"])
+            self.assertFalse(source["dataset_access_verified"])
+
+    def test_phase_2_does_not_invent_fills_or_measurements(self):
+        inventory = json.loads((DIRECTORY / "data_inventory.json").read_text(encoding="utf-8"))
+        phase = inventory["phase_2"]
+        self.assertEqual(phase["selected_fill_ids"], [])
+        self.assertEqual(phase["verified_downloadable_measurements"], [])
+        self.assertEqual(phase["verified_alignment_variables"], [])
+        self.assertTrue(all(value is None for value in phase["measurement_metadata_status"].values()))
+        self.assertEqual(phase["access_request"]["status"], "draft_not_sent")
+        self.assertIsNone(phase["access_request"]["selected_query_bounds"])
+        self.assertEqual(phase["transition_priorities"], ["injection", "ramp", "stable_beams", "dump"])
+        self.assertEqual(
+            phase["ingestion_adapter_status"], "not_implemented_no_verified_source_schema_or_payload",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

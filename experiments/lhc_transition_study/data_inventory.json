@@ -1,10 +1,78 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "checked_date_utc": "2026-10-10",
   "study_status": "design_not_run",
   "real_measurements_included": false,
   "verified_available_datasets": [],
-  "verification_limitation": "Direct web_fetch and curl requests failed DNS resolution for all four CERN hosts. No page content, dataset, access policy, units or timing metadata was verified.",
+  "verification_limitation": "Phase 1 failed DNS resolution for four CERN hosts. Phase 2 retries of the three task-owner-supplied URLs also failed DNS. No page content, dataset, access policy, units or timing metadata was directly verified in this environment.",
+  "phase_2": {
+    "status": "blocked_pending_source_access",
+    "checked_date_utc": "2026-10-10",
+    "evidence_origin": "Task owner reported independent research; source contents not independently retrieved by this session.",
+    "source_assessments": [
+      {
+        "url": "https://lpc.web.cern.ch/",
+        "reported_finding": "CERN provides public LHC programme and fill information.",
+        "finding_provenance": "task_owner_report",
+        "direct_verification_status": "dns_failure",
+        "curl_exit_code": 6,
+        "http_status": null,
+        "content_retrieved": false,
+        "dataset_access_verified": false
+      },
+      {
+        "url": "https://nxcals-docs.web.cern.ch/current/user-guide/data-access/nxcals-access-request/",
+        "reported_finding": "Detailed NXCALS data access requires authorization.",
+        "finding_provenance": "task_owner_report",
+        "direct_verification_status": "dns_failure",
+        "curl_exit_code": 6,
+        "http_status": null,
+        "content_retrieved": false,
+        "dataset_access_verified": false
+      },
+      {
+        "url": "https://home.cern/accelerator-report-10-000-lhc-fills/",
+        "reported_finding": "LHC fills include non-collision machine cycles that may provide controls.",
+        "finding_provenance": "task_owner_report",
+        "direct_verification_status": "dns_failure",
+        "curl_exit_code": 6,
+        "http_status": null,
+        "content_retrieved": false,
+        "dataset_access_verified": false
+      }
+    ],
+    "selected_fill_ids": [],
+    "selection_limitation": "No individual historical fill record or transition timestamp was retrieved. Article URL text is not used as a verified fill identifier.",
+    "verified_downloadable_measurements": [],
+    "verified_alignment_variables": [],
+    "transition_priorities": ["injection", "ramp", "stable_beams", "dump"],
+    "requested_measurements": [
+      "independent command and response records", "beam-mode declarations",
+      "magnet current setpoint and readback", "independent magnetic field if available",
+      "beam energy", "both-beam intensity", "beam losses",
+      "thermal and cryogenic readings", "clock and independent reference channels",
+      "collision status per interaction point", "luminosity and orbit/optics if available"
+    ],
+    "measurement_metadata_status": {
+      "sampling_rate_hz": null,
+      "integration_intervals": null,
+      "verified_units": null,
+      "timestamp_precision": null,
+      "timestamp_accuracy": null,
+      "time_scale": null,
+      "latency": null,
+      "synchronization": null,
+      "instrument_calibration_and_limits": null
+    },
+    "access_requirement": "Do not access detailed operational logging until CERN authorization is granted; exact eligibility and procedure require direct inspection.",
+    "ingestion_adapter_status": "not_implemented_no_verified_source_schema_or_payload",
+    "access_request": {
+      "location": "DATA_SOURCES.md#cern-data-access-request--draft-not-sent",
+      "status": "draft_not_sent",
+      "scope": "Read-only pilot export of one documented physics fill and one comparable non-collision cycle, including prior history and timing/calibration metadata.",
+      "selected_query_bounds": null
+    }
+  },
   "source_leads": [
     {
       "name": "LHC Programme Coordination",

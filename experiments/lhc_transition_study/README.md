@@ -1,4 +1,4 @@
-# LHC transition study — Phase 1
+# LHC transition study — Phases 1–2
 
 **DESIGN / NOT RUN. GV has not been detected. No real LHC data are included.**
 
@@ -42,6 +42,15 @@ CERN has no suitable data or that its services are down globally. No units,
 sampling rates, timestamp precision or synchronized exports have been verified.
 Confirmatory analysis is blocked until authorized, suitable data and timing
 metadata are obtained and the preregistration is completed.
+
+Phase 2 retried the three task-owner-supplied CERN URLs, again encountering DNS
+failures. Their independently reported public-fill, NXCALS-authorization and
+non-collision-cycle findings are recorded with attribution, not as locally
+verified source contents. No candidate fill, transition timestamp, downloadable
+measurement or synchronized source schema is verified. `DATA_SOURCES.md` contains
+the prioritized measurement requirements and a precise **unsent** access-request
+draft. No CERN ingestion adapter is warranted without an inspected real source.
+The Phase 1 protocol and analysis scaffold remain unchanged.
 
 ## Minimal software contract
 
@@ -88,6 +97,13 @@ Phase 1 validation on 2026-10-10: Python 3.12.3 standard-library unittest ran
 failed because pytest is not installed; no dependencies were installed.
 The repository-wide pytest suite was not run. `git diff --check` passed.
 
-Next action: verify the source leads from a CERN-reachable environment and
-identify an authorized synchronized export plus its clock/calibration metadata,
-without accessing restricted systems until permission is granted.
+Phase 2 validation on 2026-10-10: Python 3.12.3 standard-library unittest ran
+17 tests, all passed, with no failures or skips. The two additional tests check
+attribution and the absence of fabricated fill/measurement claims in the inventory.
+Pytest remained unavailable (`No module named pytest`); the repository-wide suite
+was not run and no dependencies were installed. `git diff --check` passed.
+These results are software/inventory checks, not scientific observations.
+
+Next action: from a CERN-reachable environment, inspect the NXCALS access-request
+page and use its confirmed route to submit the draft request for a minimal
+authorized pilot export. No request was sent by this session.
